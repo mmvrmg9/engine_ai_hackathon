@@ -1,3 +1,3 @@
 # engine_ai_hackathon
 
-Author: Chaeyoon
+Authors: Chaeyoon, Marco
