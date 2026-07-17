@@ -1,123 +1,239 @@
-# FOOD SIGNAL COACH: CLAUDE CODE BUILD PROMPT
-## eMed x OpenAI Hackathon (17–18 July 2026) — 3-Person Team MVP
+# FOOD SIGNAL COACH: eMED HACKATHON BUILD PROMPT
+## eMed x OpenAI Hackathon — At-Home Chronic Condition Management Powered by AI
 
 ---
 
-## CONTEXT
+## THE IDEA
 
-**Problem:** People managing type 2 diabetes at home receive generic nutrition advice, yet their response to meals can be highly personal. Meal logs, glucose readings, medication adherence, activity, sleep, and symptoms are usually scattered and hard to interpret. Patients are left asking: *“What can I realistically change at my next meal?”*
+Build **Food Signal Coach**, a feature inside the eMed app for people managing type 2 diabetes and related metabolic conditions at home.
 
-**Solution:** Food Signal Coach is an AI-supported at-home pattern finder. It turns quick meal logging and at-home health data into transparent, plain-language observations, one achievable food swap, and a clinician-ready summary when a pattern may warrant discussion.
+Patients log meals during the week using a photo or a short text description. The feature compares meal patterns with their weekly at-home biomarker results, such as glucose readings, weight, blood pressure, and symptom check-ins. It identifies **possible personal associations** between recurring meal patterns and the patient’s results, then suggests practical alternatives that suit the person’s lifestyle.
 
-**Key principle:** This is not a diagnostic, medication-adjustment, or autonomous triage tool. It detects **possible associations**, shows the evidence behind them, asks the patient to confirm context, and helps them prepare better conversations with their clinical team.
+The core patient question is:
 
-**Hackathon Challenge:** eMed | “At-home chronic condition management powered by AI” | AI Engine, London, 17–18 July 2026
+> “Which foods or meal patterns may not be working well for my body — and what is one realistic thing I can try instead?”
+
+This is not a generic calorie counter or another food diary. It is an AI-powered, explainable feedback loop that turns fragmented home data into one useful next action.
+
+---
+
+## WHY THIS FITS eMED
+
+eMed has shown that long-term conditions can be managed successfully at home when people have the right tools and ongoing support. Food Signal Coach extends that model between appointments:
+
+- **Makes adherence easier:** it turns nutrition advice into one small, personalised action rather than a restrictive plan.
+- **Feels human:** it asks short, relevant questions when context is missing instead of lecturing patients.
+- **Uses at-home data:** it connects food logs with the readings a patient already records at home.
+- **Supports clinical teams asynchronously:** clinicians receive an evidence-backed summary rather than raw meal logs.
+- **Builds patient agency:** people learn what works for *their* routine, culture, preferences, and budget.
 
 ---
 
 ## PRODUCT LOOP
 
 ```text
-Sense → Understand → Ask → Act → Learn → Share / Escalate
+Log a meal → Link it to at-home results → Find a possible pattern
+        → Ask for missing context → Suggest one achievable swap
+        → Learn from patient feedback → Share a concise summary with the care team
 ```
 
-1. **Sense:** Patient logs a meal in seconds (photo or text) and imports/enters a glucose reading.
-2. **Understand:** Local rules group comparable meals and readings, accounting for timing and basic context.
-3. **Ask:** AI asks at most two useful questions, such as “Was this portion typical?” or “Did you exercise after this meal?”
-4. **Act:** Patient gets one non-prescriptive, low-friction food swap.
-5. **Learn:** Patient marks whether the suggestion felt feasible; future suggestions respect preferences and constraints.
-6. **Share / Escalate:** A concise evidence-based summary is available for a clinician. Safety concerns are presented as “contact your clinical team / follow your care plan,” never as a diagnosis.
+### 1. Log
+
+The patient takes a meal photo or types a quick description:
+
+> “Sweet cereal with milk”
+
+The AI extracts a simple, editable description and tags, for example:
+
+`breakfast`, `refined carbohydrate`, `low fibre`, `dairy`
+
+The patient is never asked to count every calorie or weigh every ingredient.
+
+### 2. Link
+
+The app connects meals to relevant at-home results:
+
+- post-meal glucose readings, where available
+- weekly glucose trend / check-in
+- weekly weight or blood-pressure check-in
+- medication adherence
+- activity, sleep, symptoms, illness, and portion-size context
+
+### 3. Find a signal
+
+The app uses deterministic rules to detect a **possible association** only after enough comparable observations. It shows the evidence clearly:
+
+> “In 4 similar breakfast logs this week, your readings were higher than your usual post-meal range.”
+
+It must never claim that a food “caused” a result or that it has diagnosed a condition.
+
+### 4. Ask
+
+Before giving advice, AI asks at most two useful questions:
+
+- “Was this portion typical for you?”
+- “Did you do any activity after breakfast?”
+- “Was this a usual week for sleep, stress, or illness?”
+
+### 5. Act
+
+The patient receives one low-friction, non-prescriptive alternative:
+
+> “If it works for you, try oats with Greek yogurt and berries for two breakfasts next week, then compare how you feel and what your readings show.”
+
+Suggestions must respect allergies, cultural preferences, dietary requirements, cost, and what is realistically available.
+
+### 6. Share
+
+When the patient chooses, the app generates a clinician-ready summary:
+
+> “Possible pattern observed across 4 comparable sweet-cereal breakfasts. Patient reports portions were typical and no post-meal activity. Suggested a two-breakfast food experiment. Review if pattern persists.”
+
+The clinician sees the evidence, not an opaque AI conclusion.
+
+---
+
+## SAFETY AND TRUST BOUNDARIES
+
+Food Signal Coach is a coaching and communication feature, not an autonomous clinical decision maker.
+
+- Use phrases such as **“may be associated with,” “possible pattern,”** and **“based on 4 comparable meals.”**
+- Never diagnose diabetes complications, prescribe food as treatment, change medication, recommend insulin doses, or advise stopping medication.
+- Never claim causality from a small number of observations.
+- Always show the number of observations, dates, readings, and missing/confounding context.
+- When a patient reports concerning symptoms or results, prompt them to follow their existing care plan or contact their clinical team; do not provide an emergency assessment.
+- Use synthetic demo data only.
 
 ---
 
 ## TECH STACK
 
+- **Frontend:** React + Vite + Tailwind CSS, designed as an eMed mobile-app feature
 - **Backend:** FastAPI + Pydantic v2
-- **Frontend:** React + Vite + Tailwind CSS (mobile-first patient experience)
-- **AI:** OpenAI GPT-4o for meal-text extraction, follow-up questions, explanations, and suggestion wording
-- **Pattern detection:** Local deterministic heuristics — no LLM used to decide whether a pattern exists
-- **Data:** Synthetic JSON only; no real patient data or external clinical APIs
-- **Charts:** Recharts (or a lightweight equivalent)
-- **Deployment:** Render (backend) + Vercel (frontend), if time permits
-- **Audit log:** Append-only JSON/in-memory log of each pattern, its evidence, and the displayed patient message
+- **AI:** OpenAI GPT-4o for meal interpretation, follow-up questions, plain-language explanations, and food-swap wording
+- **Pattern engine:** local deterministic Python rules; do not use an LLM to decide whether a signal exists
+- **Charts:** Recharts or lightweight SVG charts
+- **Data:** synthetic JSON data only
+- **Auditability:** append-only JSON/in-memory audit log for all pattern decisions
 
 ---
 
-## MVP SCOPE (18-Hour Build)
+## MVP SCOPE (18-HOUR BUILD)
 
-### Phase 1: Mock Data + Meal Logging (Hours 1–3)
+### Phase 1 — Patient Timeline and Meal Logging (Hours 1–3)
 
-- Create mock data for 3 patients with 2 weeks of meals and at-home readings.
-- Support a fast text meal log; do **not** make image recognition a dependency for the demo.
-- Store meal time, food tags, estimated portion, and optional context: activity, sleep, medication taken, symptoms.
-- Create a structured meal object using a small, transparent food-tag taxonomy:
-  - `refined_carbohydrate`, `high_fibre`, `protein_source`, `vegetables`, `sugary_drink`, `processed_food`
-- Output: validated patient timeline combining meals, glucose readings, and context.
+Create mock data for three people with two weeks of:
 
-### Phase 2: Deterministic Food-Signal Engine (Hours 3–7)
+- meal logs
+- at-home glucose readings
+- weekly weight and blood-pressure results
+- medication adherence
+- activity, sleep, symptoms, and portion-size context
 
-Implement a local rules engine that identifies *possible patterns*, not causes.
+Implement a fast text meal log first. Image upload can be a visual enhancement, but must not block the demo.
 
-- Match each meal to the nearest post-meal reading within a configurable window (e.g. 1–3 hours).
-- Group meals by tag and meal type (breakfast / lunch / dinner).
-- Require at least 3 comparable observations before creating a pattern card.
-- Calculate:
-  - average post-meal reading for the group
-  - patient’s own baseline / overall average
-  - difference from baseline
-  - sample count and simple confidence label
-- Only produce a pattern when a group has sufficient data and exceeds a conservative configurable threshold.
-- Create neutral language, for example:
-  - “In 4 similar breakfasts, readings were higher than your usual post-meal range.”
-  - Never: “Cereal caused your glucose spike.”
-- Output: structured `FoodSignal` object with evidence, confidence, confounders, and safe wording.
+Use a small transparent tag taxonomy:
 
-### Phase 3: AI Conversation + Personalised Swap (Hours 7–10)
+```text
+refined_carbohydrate | high_fibre | protein_source | vegetables
+sugary_drink | processed_food | fruit | home_cooked
+```
 
-- Use GPT-4o only after the local engine has created a `FoodSignal`.
-- Generate one or two short follow-up questions based on missing context.
-- Generate a single practical suggestion, constrained by:
-  - patient food preferences and dietary restrictions
-  - allergies
-  - budget / available ingredients
-  - cultural food preferences
-- Example:
-  - Observation: “Sweet cereal breakfasts appeared alongside higher readings in 4 comparable logs.”
-  - Follow-up: “Was the portion larger than usual?”
-  - Suggestion: “If it suits you, try oats with Greek yogurt and berries on two mornings this week, then compare your readings.”
-- LLM system constraints:
-  - no diagnosis, medication changes, insulin dosing, or emergency assessment
-  - say “may be associated with,” not “caused by”
-  - present an experiment the patient can accept, dismiss, or modify
-  - refer concerning symptoms/readings to the patient’s existing care plan or clinical team
+### Phase 2 — Food-to-Biomarker Signal Engine (Hours 3–7)
 
-### Phase 4: Patient Experience + Clinician Summary (Hours 10–15)
+Build deterministic, explainable logic:
 
-Build three mobile-first screens:
+1. Match a meal with the nearest relevant at-home reading in a configured time window.
+2. Group comparable meals by meal type and food tags.
+3. Require at least three comparable observations before showing a signal.
+4. Compare the group result with the patient’s own baseline.
+5. Record confidence as `emerging`, `consistent`, or `insufficient data`.
+6. Capture potential confounders such as missed medication, unusually poor sleep, illness, or unusual portion size.
 
-1. **Today**
-   - Quick meal log
-   - Latest reading
-   - One next action / pending question
+The engine outputs a structured `FoodSignal`, not free text:
 
-2. **My Food Signals**
-   - Plain-language signal cards
-   - “Why am I seeing this?” evidence drawer: 4 meal dates, readings, comparison baseline, confidence
-   - Accept / dismiss / “not typical” feedback
-   - Suggested low-friction swap
+```json
+{
+  "patient_id": "P001",
+  "meal_pattern": "sweetened cereal breakfasts",
+  "signal_type": "higher_than_personal_baseline",
+  "observations": 4,
+  "average_reading": 11.0,
+  "baseline_reading": 8.2,
+  "confidence": "consistent",
+  "confounders": ["one low-sleep night"],
+  "safe_summary": "In 4 similar breakfast logs, readings were higher than your usual post-meal range."
+}
+```
 
-3. **Share with my care team**
-   - One-page summary: observed pattern, evidence, patient feedback, context flags, and questions for review
-   - Download/copy text is sufficient; no EHR integration
+### Phase 3 — AI Follow-Up and Practical Alternative (Hours 7–10)
 
-### Phase 5: Demo Narrative + Auditability (Hours 15–18)
+Only after the deterministic engine produces a valid `FoodSignal`, call GPT-4o to:
 
-- Create one polished primary journey: **Aisha**, living with type 2 diabetes.
-- Aisha logs four similar sweet-cereal breakfasts, each followed by a higher-than-usual reading.
-- The system asks whether those were typical portions and whether she exercised afterwards.
-- It explains the observed association, suggests a realistic alternative, and allows Aisha to start a two-breakfast experiment.
-- A clinician summary makes the observation reviewable without requiring a real-time appointment.
-- Log every pattern decision with timestamp, input IDs, rule version, evidence count, and patient-facing text.
+- ask up to two context-aware follow-up questions
+- explain the observed pattern in plain language
+- propose one patient-appropriate meal swap or small experiment
+
+Required AI guardrails:
+
+```text
+Do not diagnose.
+Do not claim food caused a biomarker change.
+Do not recommend medication changes or dosing.
+Do not use alarmist language.
+Use the evidence supplied by the rules engine; never invent observations.
+Suggest an optional, achievable experiment rather than a command.
+```
+
+### Phase 4 — eMed Feature Experience (Hours 10–15)
+
+Build these screens as an embedded eMed feature.
+
+#### A. Today: “Log a meal”
+
+- photo/text meal entry
+- editable AI-generated tags
+- latest at-home reading and optional context check-in
+- a progress cue: “You have logged 3 breakfasts this week”
+
+#### B. My Food Signals
+
+- one clear signal card, not a crowded dashboard
+- visual timeline of meals and readings
+- “Why am I seeing this?” evidence drawer with dates, readings, baseline, sample size, and confounders
+- `Typical`, `Not typical`, and `Try this swap` feedback options
+
+#### C. My Next Experiment
+
+- one suggested alternative
+- patient can accept, edit, or decline it
+- simple goal: “Try this for two breakfasts next week”
+- show completion, not a medical outcome promise
+
+#### D. Share with My Care Team
+
+- concise clinician summary
+- observed pattern, evidence, patient feedback, and unresolved questions
+- copy/download is sufficient; no EHR integration needed
+
+### Phase 5 — Demo and Audit Trail (Hours 15–18)
+
+Demonstrate one complete patient journey.
+
+**Aisha**, 51, lives with type 2 diabetes. Over one week, she logs four similar sweet-cereal breakfasts. Each is followed by a higher-than-usual glucose reading. The feature:
+
+1. shows the association and its evidence;
+2. asks if portions were typical and whether she exercised afterwards;
+3. offers a culturally appropriate, affordable breakfast experiment;
+4. records her choice; and
+5. creates a clinician-ready summary for an asynchronous review.
+
+Also show:
+
+- **Ben:** stable results and no reliable food signal — prove the app does not make up advice.
+- **Carla:** insufficient or heavily confounded data — show a helpful “keep logging; we need more comparable meals” state.
+
+Audit every signal with timestamp, input record IDs, rule version, evidence count, confidence, and displayed wording.
 
 ---
 
@@ -134,7 +250,8 @@ Build three mobile-first screens:
       "preferences": {
         "dietary_requirements": ["halal"],
         "allergies": ["peanuts"],
-        "goals": ["steadier glucose", "simple weekday breakfasts"]
+        "goals": ["steadier glucose", "simple weekday breakfasts"],
+        "budget": "moderate"
       },
       "meal_logs": [
         {
@@ -157,6 +274,14 @@ Build three mobile-first screens:
           "context": "post_meal"
         }
       ],
+      "weekly_checks": [
+        {
+          "date": "2026-07-12",
+          "weight_kg": 82.1,
+          "systolic_bp": 132,
+          "diastolic_bp": 82
+        }
+      ],
       "context_logs": [
         {
           "date": "2026-07-06",
@@ -170,23 +295,17 @@ Build three mobile-first screens:
 }
 ```
 
-Create at least:
-
-- **Aisha:** strong, explainable breakfast pattern (main demo).
-- **Ben:** stable readings / no pattern — proves the product does not invent advice.
-- **Carla:** insufficient or confounded data — shows a “keep logging; we need more comparable meals” state.
-
 ---
 
 ## API CONTRACT
 
-- `POST /patients/{id}/meals` — add a text meal log
-- `POST /patients/{id}/readings` — add an at-home reading
-- `GET /patients/{id}/timeline` — chronological meals, readings, and context
-- `GET /patients/{id}/food-signals` — deterministic pattern results with evidence
-- `POST /food-signals/{id}/follow-up` — save patient answer / feedback
-- `GET /patients/{id}/clinician-summary` — safe, concise sharing summary
-- `GET /audit-log` — display demo audit events
+- `POST /patients/{id}/meals` — add meal text/photo metadata and context
+- `POST /patients/{id}/readings` — add an at-home biomarker reading
+- `GET /patients/{id}/timeline` — meals, readings, weekly checks, and context in chronological order
+- `GET /patients/{id}/food-signals` — deterministic pattern results and evidence
+- `POST /food-signals/{id}/feedback` — save “typical/not typical”, follow-up answers, and experiment choice
+- `GET /patients/{id}/clinician-summary` — concise evidence-backed sharing summary
+- `GET /audit-log` — audit events for demo transparency
 
 ---
 
@@ -208,6 +327,7 @@ frontend/
   src/
     pages/Today.tsx
     pages/FoodSignals.tsx
+    pages/MyExperiment.tsx
     pages/ShareSummary.tsx
     components/MealLogForm.tsx
     components/FoodSignalCard.tsx
@@ -218,91 +338,38 @@ requirements.txt
 
 ---
 
-## DELIVERABLES (END OF 18 HOURS)
+## STARTING PROMPT FOR CLAUDE CODE
 
-### Code
-
-- Working FastAPI API with deterministic meal-to-reading matching and signal detection
-- React patient experience with Today, Food Signals, and Share Summary screens
-- Synthetic three-patient data set
-- OpenAI-powered follow-up questions and suggestion wording behind safety guardrails
-- Append-only audit trail
-- README with setup, demo flow, and safety limitations
-
-### Demo Ready
-
-- Aisha logs a breakfast and sees her timeline.
-- The app reveals a signal based on four comparable meals, with evidence visible.
-- She answers one contextual question and accepts a simple two-breakfast experiment.
-- Judges see a clinician-ready summary generated from the same evidence.
-- Ben demonstrates that no signal appears when no reliable pattern exists.
-
-### Narrative
-
-> “Patients do not need another food diary. They need a coach that helps them understand their own data, make one achievable change, and bring meaningful patterns to their clinical team.”
-
----
-
-## STARTING PROMPT (FOR CLAUDE CODE)
-
-> Build the Food Signal Coach MVP for the eMed x OpenAI Hackathon.
+> Build Food Signal Coach as an eMed app feature for the eMed x OpenAI Hackathon.
 >
-> Start with Phase 1 and Phase 2 only:
-> - Create FastAPI + Pydantic models for patients, meal logs, glucose readings, context logs, and food signals.
-> - Add mock data for Aisha, Ben, and Carla.
-> - Build a deterministic timeline matcher that links meals to the nearest post-meal reading within 1–3 hours.
-> - Build a deterministic Food Signal engine that groups comparable meals and emits a possible association only with at least 3 observations.
-> - Return evidence, patient baseline, sample count, confidence, and neutral wording. Do not use an LLM for pattern detection.
+> The feature helps people with type 2 diabetes log meals, compare recurring meal patterns with at-home biomarker results, identify transparent possible associations, and try one realistic food alternative. It is a coaching and clinician-communication feature, not a diagnostic or treatment tool.
 >
-> Keep the code modular and use synthetic data only. Do not make medical diagnoses, medication changes, or claims of causality.
+> Start with the backend foundations only:
+> - Create FastAPI and Pydantic models for patients, meal logs, glucose readings, weekly checks, context logs, and food signals.
+> - Add synthetic JSON data for Aisha, Ben, and Carla.
+> - Build a deterministic timeline matcher linking meals to the nearest post-meal reading in a 1–3 hour window.
+> - Build a deterministic food-signal engine: group comparable meals, require at least 3 observations, compare against each patient’s baseline, and return evidence, confidence, confounders, and neutral wording.
+> - `GET /patients/P001/food-signals` should return Aisha’s explainable cereal-breakfast signal.
+> - `GET /patients/P002/food-signals` should return no reliable signal.
+> - Do not use an LLM to detect patterns. Do not make medical diagnoses, medication recommendations, or causal claims.
 >
-> First milestone: `GET /patients/P001/food-signals` returns Aisha’s explainable breakfast signal and `GET /patients/P002/food-signals` returns no signal.
+> Keep code modular: timeline matching, signal detection, AI coaching, safety rules, clinician summary, and audit log must be separate services.
 
 ---
 
-## CHECKPOINT: AFTER PHASE 2 (HOUR 7)
+## SUCCESS CRITERIA
 
-Before adding AI or frontend work, verify:
-
-- [ ] Mock data loads and validates with Pydantic.
-- [ ] Meals are matched only to readings in the configured post-meal window.
-- [ ] A signal requires at least three comparable observations.
-- [ ] Every signal displays its exact evidence and sample count.
-- [ ] The system uses association language, never causal or diagnostic language.
-- [ ] Ben receives no invented signal; Carla receives an insufficient-data explanation.
-
-If any fail, fix the deterministic engine before adding GPT-4o.
-
----
-
-## SUCCESS CRITERIA (18-HOUR DEMO)
-
-- [ ] Patient can log a meal in under 20 seconds.
-- [ ] Aisha’s breakfast pattern is detected reproducibly from synthetic data.
-- [ ] The UI visibly explains *why* the pattern was shown.
-- [ ] AI asks no more than two relevant follow-up questions.
-- [ ] Suggestion is practical and respects stated restrictions.
-- [ ] No diagnosis, dosing advice, or unsupported causal claim is shown.
-- [ ] Clinician summary is concise, evidence-backed, and shareable.
-- [ ] Code is modular, readable, and runnable locally.
-
----
-
-## RUNNING LOCALLY (AFTER BUILD)
-
-```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app:app --reload
-
-# In another terminal:
-cd frontend
-npm install
-npm run dev
-```
+- [ ] A patient can log a meal in under 20 seconds.
+- [ ] The app detects Aisha’s recurring breakfast association using deterministic rules.
+- [ ] The app visibly explains evidence, baseline, sample count, and limitations.
+- [ ] The AI asks only useful follow-ups and provides one achievable, personalised alternative.
+- [ ] The UI has a safe insufficient-data state and does not invent advice for Ben.
+- [ ] A clinician can review a concise, evidence-backed summary without reviewing raw meal logs.
+- [ ] Every signal is recorded in an audit trail.
+- [ ] The build feels like an eMed feature: supportive, practical, explainable, and designed for life at home.
 
 ---
 
 ## GO BUILD
 
-Build the evidence loop first. A polished, safe, personalised insight for one patient is more persuasive than a broad dashboard with unexplainable recommendations.
+Do not build a generic health dashboard. Build one memorable loop: **a patient logs everyday meals, sees an understandable pattern in their own at-home data, and gets one realistic next experiment.**
