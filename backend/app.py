@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.models import Patient, DailyLog, WearableLog, JourneyStage, VoiceCheckIn
 from backend.services.pattern_engine import detect
 from backend.services.voice_checkin import extract
@@ -50,3 +51,19 @@ def set_stage(pid: str, stage: JourneyStage):
 
 @app.get("/audit-log")
 def audit(): return audit_log
+
+@app.get("/patients/{pid}/clinician-summary")
+def clinician_summary(pid: str):
+    p = patient_or_404(pid)
+    signals = detect(p)
+    latest = sorted(p.daily_logs, key=lambda x: x.date)[-3:]
+    return {
+        "title": f"Endo Loop symptom summary - {p.name}",
+        "journey_stage": p.journey_stage.value.replace("_", " "),
+        "patterns": [{"title": x.title, "wording": x.wording, "evidence": x.evidence, "sample_count": x.sample_count} for x in signals],
+        "recent_entries": [{"date": str(x.date), "pain_score": x.pain_score, "pain_location": x.pain_location, "pain_type": x.pain_type, "sleep_hours": x.sleep_hours, "gi_symptoms": x.gi_symptoms} for x in latest],
+        "note": "Generated from patient-entered synthetic prototype data. This is a discussion aid, not a diagnosis or treatment recommendation.",
+    }
+
+# The prototype ships its browser UI with the API for a single local demo URL.
+app.mount("/", StaticFiles(directory=Path(__file__).parent.parent / "frontend", html=True), name="frontend")
