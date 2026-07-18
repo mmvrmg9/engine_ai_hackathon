@@ -2,4 +2,3 @@
 
 Authors: Chaeyoon, Marco
 Co-authored: Vossco Nguyen
-Authors: Chaeyoon, Marco
