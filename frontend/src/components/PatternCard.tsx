@@ -6,7 +6,7 @@ import { EvidenceDrawer } from './EvidenceDrawer'
 const CONFIDENCE_STYLES: Record<PatternSignal['confidence'], string> = {
   emerging: 'bg-slate-100 text-slate-600',
   moderate: 'bg-amber-100 text-amber-700',
-  notable: 'bg-violet-100 text-violet-700',
+  notable: 'bg-rose-100 text-rose-700',
 }
 
 type Feedback = 'accepted' | 'dismissed' | 'not_typical'
@@ -37,7 +37,7 @@ export function PatternCard({ pattern }: { pattern: PatternSignal }) {
       <button
         type="button"
         onClick={() => setShowEvidence((v) => !v)}
-        className="mt-3 text-sm font-medium text-violet-700 underline-offset-2 hover:underline"
+        className="mt-3 text-sm font-medium text-rose-700 underline-offset-2 hover:underline"
       >
         {showEvidence ? 'Hide the evidence' : 'Why am I seeing this?'}
       </button>

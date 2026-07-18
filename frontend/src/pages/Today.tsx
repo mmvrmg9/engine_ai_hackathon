@@ -73,7 +73,7 @@ export function Today() {
               </p>
               <p className="text-sm leading-relaxed text-slate-700">{patterns.explanation}</p>
               {patterns.next_step && (
-                <p className="mt-3 rounded-xl bg-violet-50 p-3 text-sm text-violet-800">
+                <p className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">
                   <span className="font-semibold">Safe next step: </span>
                   {patterns.next_step}
                 </p>
@@ -82,8 +82,8 @@ export function Today() {
           )}
 
           {pendingQuestion && !justAnswered && (
-            <div className="rounded-2xl border border-violet-200 bg-violet-50 p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-violet-500">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-500">
                 One quick question
               </p>
               <p className="mb-3 text-sm font-medium text-slate-800">{pendingQuestion.question_text}</p>
@@ -92,13 +92,13 @@ export function Today() {
                 onChange={(e) => setAnswerDraft(e.target.value)}
                 placeholder="Type your answer..."
                 rows={2}
-                className="w-full rounded-lg border border-violet-200 bg-white px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+                className="w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm focus:border-rose-500 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={submitAnswer}
                 disabled={!answerDraft.trim() || answeringId === pendingQuestion.id}
-                className="mt-2 rounded-lg bg-violet-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                className="mt-2 rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
               >
                 {answeringId === pendingQuestion.id ? 'Saving...' : 'Send answer'}
               </button>
@@ -117,14 +117,14 @@ export function Today() {
         <button
           type="button"
           onClick={() => setLogMode('manual')}
-          className={`rounded-full px-3 py-1.5 ${logMode === 'manual' ? 'bg-violet-600 text-white' : 'bg-white text-slate-500'}`}
+          className={`rounded-full px-3 py-1.5 ${logMode === 'manual' ? 'bg-rose-600 text-white' : 'bg-white text-slate-500'}`}
         >
           Log today
         </button>
         <button
           type="button"
           onClick={() => setLogMode('voice')}
-          className={`rounded-full px-3 py-1.5 ${logMode === 'voice' ? 'bg-violet-600 text-white' : 'bg-white text-slate-500'}`}
+          className={`rounded-full px-3 py-1.5 ${logMode === 'voice' ? 'bg-rose-600 text-white' : 'bg-white text-slate-500'}`}
         >
           Voice check-in
         </button>

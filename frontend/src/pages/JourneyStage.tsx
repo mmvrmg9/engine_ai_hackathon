@@ -47,16 +47,16 @@ export function JourneyStagePage() {
               disabled={saving !== null}
               className={`w-full rounded-2xl border p-4 text-left transition-colors disabled:opacity-60 ${
                 active
-                  ? 'border-violet-600 bg-violet-50'
-                  : 'border-slate-200 bg-white hover:border-violet-300'
+                  ? 'border-rose-600 bg-rose-50'
+                  : 'border-slate-200 bg-white hover:border-rose-300'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className={`font-semibold ${active ? 'text-violet-800' : 'text-slate-900'}`}>
+                <span className={`font-semibold ${active ? 'text-rose-800' : 'text-slate-900'}`}>
                   {JOURNEY_STAGE_LABELS[stage]}
                 </span>
                 {active && (
-                  <span className="rounded-full bg-violet-600 px-2 py-0.5 text-xs font-medium text-white">
+                  <span className="rounded-full bg-rose-600 px-2 py-0.5 text-xs font-medium text-white">
                     Selected
                   </span>
                 )}

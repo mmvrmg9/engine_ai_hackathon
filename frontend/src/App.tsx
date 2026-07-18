@@ -20,10 +20,10 @@ function AppShell() {
         {loading && <div className="p-6 text-center text-slate-400">Loading Endo Loop...</div>}
 
         {!loading && error && (
-          <div className="m-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          <div className="m-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             <p className="font-semibold">Can't reach the Endo Loop API.</p>
             <p className="mt-1">{error}</p>
-            <p className="mt-2 text-rose-500">
+            <p className="mt-2 text-red-500">
               Make sure the backend is running: <code>cd backend &amp;&amp; python -m uvicorn app:app --reload</code>
             </p>
           </div>

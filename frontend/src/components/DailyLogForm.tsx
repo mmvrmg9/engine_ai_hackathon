@@ -22,8 +22,8 @@ function Chip({
       onClick={onClick}
       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
         active
-          ? 'border-violet-600 bg-violet-600 text-white'
-          : 'border-slate-300 bg-white text-slate-600 hover:border-violet-400'
+          ? 'border-rose-600 bg-rose-600 text-white'
+          : 'border-slate-300 bg-white text-slate-600 hover:border-rose-400'
       }`}
     >
       {children}
@@ -87,21 +87,28 @@ export function DailyLogForm({
     <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-4">
       <div>
         <div className="mb-1 flex items-baseline justify-between">
-          <label htmlFor="pain-score" className="text-sm font-semibold text-slate-700">
-            Pain today
-          </label>
-          <span className="text-2xl font-bold text-violet-700">{painScore}</span>
+          <p className="text-sm font-semibold text-slate-700">Pain today</p>
+          <span className="text-2xl font-bold text-rose-700">{painScore}</span>
         </div>
-        <input
-          id="pain-score"
-          type="range"
-          min={0}
-          max={10}
-          value={painScore}
-          onChange={(e) => setPainScore(Number(e.target.value))}
-          className="w-full accent-violet-600"
-        />
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Pain score from zero to ten">
+          {Array.from({ length: 11 }, (_, n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => setPainScore(n)}
+              aria-label={`Pain ${n} out of 10`}
+              aria-pressed={n === painScore}
+              className={`h-9 w-9 shrink-0 rounded-full text-sm font-semibold transition-colors ${
+                n === painScore
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'bg-rose-50 text-rose-800 hover:bg-rose-100'
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <div className="mt-1 flex justify-between text-xs text-slate-400">
           <span>No pain</span>
           <span>Worst pain</span>
         </div>
@@ -167,19 +174,28 @@ export function DailyLogForm({
       </div>
 
       <div>
-        <label htmlFor="sleep-hours" className="mb-1.5 block text-sm font-semibold text-slate-700">
-          Sleep (hours)
-        </label>
-        <input
-          id="sleep-hours"
-          type="number"
-          min={0}
-          max={24}
-          step={0.5}
-          value={sleepHours}
-          onChange={(e) => setSleepHours(Number(e.target.value))}
-          className="w-32 rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-violet-500 focus:outline-none"
-        />
+        <p className="mb-1.5 text-sm font-semibold text-slate-700">Sleep last night</p>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setSleepHours((h) => Math.max(0, h - 0.5))}
+            aria-label="Reduce sleep hours"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-xl font-bold text-rose-700 hover:bg-rose-100"
+          >
+            &minus;
+          </button>
+          <span className="min-w-[4rem] text-center text-xl font-bold text-rose-700">
+            {sleepHours % 1 === 0 ? sleepHours : sleepHours.toFixed(1)}h
+          </span>
+          <button
+            type="button"
+            onClick={() => setSleepHours((h) => Math.min(24, h + 0.5))}
+            aria-label="Increase sleep hours"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-xl font-bold text-rose-700 hover:bg-rose-100"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {showCycleDay && (
@@ -195,7 +211,7 @@ export function DailyLogForm({
             value={cycleDay}
             onChange={(e) => setCycleDay(e.target.value)}
             placeholder="e.g. 14"
-            className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-violet-500 focus:outline-none"
+            className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-rose-500 focus:outline-none"
           />
         </div>
       )}
@@ -203,7 +219,7 @@ export function DailyLogForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:opacity-50"
+        className="w-full rounded-xl bg-rose-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-50"
       >
         {submitting ? 'Saving...' : done ? 'Logged for today' : 'Log today'}
       </button>

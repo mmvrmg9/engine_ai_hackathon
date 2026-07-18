@@ -62,7 +62,7 @@ export function MyPatterns() {
                     <Line
                       type="monotone"
                       dataKey="pain"
-                      stroke="#7c3aed"
+                      stroke="#e11d48"
                       strokeWidth={2}
                       dot={{ r: 3 }}
                       name="Pain score"

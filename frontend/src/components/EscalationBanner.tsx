@@ -2,7 +2,7 @@ import type { EscalationLevel } from '../api'
 
 const STYLES: Record<Exclude<EscalationLevel, 'none'>, string> = {
   watch: 'border-amber-300 bg-amber-50 text-amber-800',
-  contact_care_team: 'border-rose-300 bg-rose-50 text-rose-800',
+  contact_care_team: 'border-red-300 bg-red-50 text-red-800',
 }
 
 const TITLES: Record<Exclude<EscalationLevel, 'none'>, string> = {

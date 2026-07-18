@@ -106,10 +106,10 @@ export function VoiceCheckIn({
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border border-violet-200 bg-violet-50/60 p-4">
+    <div className="space-y-3 rounded-2xl border border-rose-200 bg-rose-50/60 p-4">
       <div>
-        <p className="text-sm font-semibold text-violet-900">Voice check-in</p>
-        <p className="text-xs text-violet-700">
+        <p className="text-sm font-semibold text-rose-900">Voice check-in</p>
+        <p className="text-xs text-rose-700">
           Tell me what today has been like -- pain, sleep, anything else. I'll draft today's log for you to
           review before it's saved.
         </p>
@@ -122,7 +122,7 @@ export function VoiceCheckIn({
           aria-pressed={listening}
           aria-label={listening ? 'Stop listening' : 'Start talking'}
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white transition-colors ${
-            listening ? 'animate-pulse bg-emerald-600' : 'bg-violet-600 hover:bg-violet-700'
+            listening ? 'animate-pulse bg-emerald-600' : 'bg-rose-600 hover:bg-rose-700'
           }`}
         >
           &#9679;
@@ -141,47 +141,47 @@ export function VoiceCheckIn({
         onChange={(e) => setTranscript(e.target.value)}
         placeholder="e.g. Today has been difficult. The pain is 7 out of 10, low on my left side, and I slept about 4 hours."
         rows={3}
-        className="w-full rounded-lg border border-violet-200 bg-white px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+        className="w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm focus:border-rose-500 focus:outline-none"
       />
 
       <button
         type="button"
         onClick={review}
         disabled={!transcript.trim() || reviewing}
-        className="rounded-lg bg-violet-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+        className="rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
       >
         {reviewing ? 'Listening for details...' : 'Continue'}
       </button>
 
       {result && (
-        <div className="space-y-3 rounded-xl border border-violet-200 bg-white p-3">
+        <div className="space-y-3 rounded-xl border border-rose-200 bg-white p-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">What I heard</p>
             <p className="text-sm text-slate-700">{result.neutral_summary}</p>
           </div>
 
           {result.follow_up_questions.length > 0 && (
-            <div className="rounded-lg bg-violet-50 p-3">
+            <div className="rounded-lg bg-rose-50 p-3">
               {result.follow_up_questions.map((q) => (
-                <p key={q} className="text-sm text-violet-800">
+                <p key={q} className="text-sm text-rose-800">
                   {q}
                 </p>
               ))}
-              <p className="mt-1 text-xs text-violet-500">
+              <p className="mt-1 text-xs text-rose-500">
                 Add more detail above and tap Continue, or save as-is -- you can edit later.
               </p>
             </div>
           )}
 
           {result.safety_note && (
-            <p className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">{result.safety_note}</p>
+            <p className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{result.safety_note}</p>
           )}
 
           <button
             type="button"
             onClick={save}
             disabled={saving}
-            className="w-full rounded-xl bg-violet-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-rose-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save check-in'}
           </button>

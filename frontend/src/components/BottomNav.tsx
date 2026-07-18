@@ -19,7 +19,7 @@ export function BottomNav() {
             end={to === '/'}
             className={({ isActive }) =>
               `flex flex-1 flex-col items-center gap-0.5 py-2 text-xs font-medium transition-colors ${
-                isActive ? 'text-violet-700' : 'text-slate-400'
+                isActive ? 'text-rose-700' : 'text-slate-400'
               }`
             }
           >

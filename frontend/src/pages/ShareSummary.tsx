@@ -96,7 +96,7 @@ export function ShareSummary() {
             <button
               type="button"
               onClick={handleCopy}
-              className="flex-1 rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white"
+              className="flex-1 rounded-xl bg-rose-600 py-2 text-sm font-semibold text-white"
             >
               {copied ? 'Copied' : 'Copy as text'}
             </button>
