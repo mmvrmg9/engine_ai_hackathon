@@ -22,3 +22,9 @@
 
 ## Architecture
 Split deployment — React frontend on Vercel talking to a FastAPI backend on Render, with Claude (Anthropic API) powering the LLM-driven follow-up question logic.
+
+## Deployment (this repo)
+- **Frontend:** https://engine-ai-hackathon-frontend.vercel.app (Vercel project `engine-ai-hackathon-frontend`, deployed from `frontend/`)
+- **Backend:** https://engine-ai-hackathon-backend.onrender.com (Render Blueprint synced from `render.yaml`, connected via public repo URL since the GitHub App on the Render account isn't authorized for `mmvrmg9/engine_ai_hackathon`)
+- Neither deployment currently auto-deploys on push (Vercel's Git integration and Render's Auto-Deploy both require GitHub App access to this repo, which the connected accounts don't have) — redeploy manually with `vercel --prod` in `frontend/`, or "Manual sync" on the Render Blueprint.
+- `ANTHROPIC_API_KEY` is unset on the Render service; the AI-coach layer runs on its deterministic fallback template until someone adds the key in Render's dashboard.
