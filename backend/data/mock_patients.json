@@ -1,0 +1,21 @@
+{
+  "patients": [
+    {"id":"P001","name":"Priya","journey_stage":"diagnosed_managing","daily_logs":[
+      {"date":"2026-07-12","cycle_day":17,"pain_score":3,"pain_location":"lower_left_pelvic","pain_type":"cramping","sleep_hours":7},
+      {"date":"2026-07-13","cycle_day":18,"pain_score":5,"pain_location":"lower_left_pelvic","pain_type":"cramping","sleep_hours":5.5},
+      {"date":"2026-07-14","cycle_day":19,"pain_score":7,"pain_location":"lower_left_pelvic","pain_type":"cramping","sleep_hours":4.5}
+    ],"wearable_logs":[
+      {"date":"2026-07-12","hrv_ms":42,"hrv_baseline_ms":41,"resting_hr":68,"skin_temp_delta_c":0.1},
+      {"date":"2026-07-13","hrv_ms":36,"hrv_baseline_ms":41,"resting_hr":72,"skin_temp_delta_c":0.2},
+      {"date":"2026-07-14","hrv_ms":32,"hrv_baseline_ms":41,"resting_hr":74,"skin_temp_delta_c":0.3}
+    ]},
+    {"id":"P002","name":"Mei","journey_stage":"exploring","daily_logs":[
+      {"date":"2026-07-14","cycle_day":19,"pain_score":4,"pain_location":"pelvic","pain_type":"aching","sleep_hours":6}
+    ],"wearable_logs":[]},
+    {"id":"P003","name":"Sam","journey_stage":"post_surgical","daily_logs":[
+      {"date":"2026-07-12","cycle_day":null,"pain_score":7,"pain_location":"pelvic","pain_type":"aching","sleep_hours":6},
+      {"date":"2026-07-13","cycle_day":null,"pain_score":5,"pain_location":"pelvic","pain_type":"aching","sleep_hours":7},
+      {"date":"2026-07-14","cycle_day":null,"pain_score":5,"pain_location":"pelvic","pain_type":"aching","sleep_hours":6}
+    ],"wearable_logs":[]}
+  ]
+}
