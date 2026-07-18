@@ -67,6 +67,7 @@ class DailyLog(BaseModel):
     fever: bool = False
     gi_symptoms: list[str] = Field(default_factory=list)
     fatigue: Optional[FatigueLevel] = None
+    stress_level: Optional[str] = None
     sleep_hours: Optional[float] = Field(default=None, ge=0, le=24)
     medication_taken: bool = False
 

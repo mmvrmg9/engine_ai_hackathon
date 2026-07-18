@@ -6,6 +6,7 @@ const PAIN_LOCATIONS = ['lower_left_pelvic', 'lower_right_pelvic', 'central_pelv
 const PAIN_TYPES = ['cramping', 'sharp', 'aching', 'burning', 'pressure']
 const GI_OPTIONS = ['bloating', 'nausea', 'diarrhea', 'constipation']
 const FATIGUE_OPTIONS: FatigueLevel[] = ['low', 'medium', 'high']
+const STRESS_OPTIONS = ['low', 'medium', 'high']
 
 function Chip({
   active,
@@ -54,6 +55,7 @@ export function DailyLogForm({
   const [fatigue, setFatigue] = useState<FatigueLevel>('low')
   const [sleepHours, setSleepHours] = useState(7)
   const [giSymptoms, setGiSymptoms] = useState<string[]>([])
+  const [stressLevel, setStressLevel] = useState<string | null>(null)
   const [cycleDay, setCycleDay] = useState('')
   const [done, setDone] = useState(false)
 
@@ -75,6 +77,7 @@ export function DailyLogForm({
       fever,
       medication_taken: medicationTaken,
       fatigue,
+      stress_level: stressLevel,
       sleep_hours: sleepHours,
       gi_symptoms: giSymptoms,
       cycle_day: showCycleDay && cycleDay ? Number(cycleDay) : null,
@@ -168,6 +171,17 @@ export function DailyLogForm({
           {FATIGUE_OPTIONS.map((f) => (
             <Chip key={f} active={fatigue === f} onClick={() => setFatigue(f)}>
               {label(f)}
+            </Chip>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-1.5 text-sm font-semibold text-slate-700">Stress today</p>
+        <div className="flex flex-wrap gap-2">
+          {STRESS_OPTIONS.map((level) => (
+            <Chip key={level} active={stressLevel === level} onClick={() => setStressLevel(level === stressLevel ? null : level)}>
+              {level}
             </Chip>
           ))}
         </div>
