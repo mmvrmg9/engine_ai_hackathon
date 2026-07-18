@@ -22,9 +22,11 @@ export type PatternType =
   | 'post_surgical_plateau'
   | 'insufficient_data'
 export type EscalationLevel = 'none' | 'watch' | 'contact_care_team'
+export type DataAccessLevel = 'private' | 'ask_each_time' | 'automated_report'
 
 export interface Preferences {
   goals: string[]
+  data_access: DataAccessLevel
 }
 
 export interface DailyLog {
@@ -155,6 +157,14 @@ export interface ClinicianSummary {
   insufficient_data: boolean
 }
 
+export interface SummaryShareReceipt {
+  patient_id: string
+  data_access: DataAccessLevel
+  shared_at: string
+  patient_confirmed: boolean
+  delivery: string
+}
+
 export interface VoiceCheckIn {
   transcript: string
   date: string
@@ -196,6 +206,16 @@ export const api = {
     }),
   getClinicianSummary: (patientId: string) =>
     request<ClinicianSummary>(`/patients/${patientId}/clinician-summary`),
+  updateDataAccess: (patientId: string, dataAccess: DataAccessLevel) =>
+    request<Patient>(`/patients/${patientId}/data-access`, {
+      method: 'PATCH',
+      body: JSON.stringify({ data_access: dataAccess }),
+    }),
+  shareClinicianSummary: (patientId: string, patientConfirmed = false) =>
+    request<SummaryShareReceipt>(`/patients/${patientId}/clinician-summary/share`, {
+      method: 'POST',
+      body: JSON.stringify({ patient_confirmed: patientConfirmed }),
+    }),
   updateJourneyStage: (patientId: string, stage: JourneyStage) =>
     request<Patient>(`/patients/${patientId}/journey-stage`, {
       method: 'PATCH',

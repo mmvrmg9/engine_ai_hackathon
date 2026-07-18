@@ -20,7 +20,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from models import (
     AuditEntry,
     ClinicianSummary,
+    DataAccessLevel,
+    DataAccessUpdate,
     DailyLog,
+    EscalationLevel,
     FollowUpAnswer,
     FollowUpAnswerIn,
     FollowUpQuestion,
@@ -28,6 +31,9 @@ from models import (
     Patient,
     PatientDB,
     PatternsResponse,
+    PatternType,
+    SummaryShareReceipt,
+    SummaryShareRequest,
     TimelineEntry,
     VoiceCheckIn,
     VoiceCheckInResult,
@@ -130,6 +136,21 @@ def get_patterns(patient_id: str) -> PatternsResponse:
     patterns = pattern_engine.detect_patterns(patient)
     escalation, reason = safety_rules.evaluate_escalation(patient, entries, patterns)
 
+    # In automated-report mode, meaningful findings are made available to the
+    # care team as part of the pattern-check workflow. The demo records this
+    # handoff in its audit trail rather than sending data to an external EHR.
+    has_meaningful_pattern = any(
+        signal.pattern_type != PatternType.INSUFFICIENT_DATA for signal in patterns
+    )
+    if patient.preferences.data_access == DataAccessLevel.AUTOMATED_REPORT and (
+        has_meaningful_pattern or escalation != EscalationLevel.NONE
+    ):
+        audit_log.record_summary_share(
+            patient_id,
+            DataAccessLevel.AUTOMATED_REPORT,
+            patient_confirmed=False,
+        )
+
     for signal in patterns:
         audit_log.record_pattern(patient_id, signal)
     audit_log.record_escalation(patient_id, pattern_engine.RULE_VERSION, escalation, reason)
@@ -198,6 +219,61 @@ def get_clinician_summary(patient_id: str) -> ClinicianSummary:
 
     answers = {q.id: _ANSWERS[q.id] for q in questions if q.id in _ANSWERS}
     return clinician_summary.build_summary(patient, patterns, questions, answers, escalation, reason)
+
+
+@app.patch("/patients/{patient_id}/data-access", response_model=Patient)
+def update_data_access(patient_id: str, update: DataAccessUpdate) -> Patient:
+    """Update the patient's report-sharing preference.
+
+    This in-memory setting is deliberately separate from pattern detection:
+    private mode still lets a patient inspect their own data and summary.
+    It only prevents the care-team share action below.
+    """
+
+    patient = _get_patient(patient_id)
+    patient.preferences.data_access = update.data_access
+    return patient
+
+
+@app.post(
+    "/patients/{patient_id}/clinician-summary/share",
+    response_model=SummaryShareReceipt,
+)
+def share_clinician_summary(
+    patient_id: str,
+    request: SummaryShareRequest,
+) -> SummaryShareReceipt:
+    """Make a clinician summary available according to patient consent.
+
+    There is no external clinician-system integration in the hackathon demo.
+    This endpoint represents that handoff and writes an immutable-style audit
+    event rather than silently exporting health data.
+    """
+
+    patient = _get_patient(patient_id)
+    access = patient.preferences.data_access
+
+    if access == DataAccessLevel.PRIVATE:
+        raise HTTPException(
+            status_code=403,
+            detail="This patient's data is private and cannot be shared with the care team.",
+        )
+
+    if access == DataAccessLevel.ASK_EACH_TIME and not request.patient_confirmed:
+        raise HTTPException(
+            status_code=409,
+            detail="Patient confirmation is required before sharing this report.",
+        )
+
+    patient_confirmed = access == DataAccessLevel.ASK_EACH_TIME
+    audit_log.record_summary_share(patient_id, access, patient_confirmed)
+    return SummaryShareReceipt(
+        patient_id=patient_id,
+        data_access=access,
+        shared_at=datetime.now(timezone.utc),
+        patient_confirmed=patient_confirmed,
+        delivery="Clinician report marked ready for the care team.",
+    )
 
 
 @app.patch("/patients/{patient_id}/journey-stage", response_model=Patient)

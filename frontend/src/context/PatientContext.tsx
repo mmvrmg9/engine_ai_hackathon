@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { api, type JourneyStage, type Patient } from '../api'
+import { api, type DataAccessLevel, type JourneyStage, type Patient } from '../api'
 
 interface PatientContextValue {
   patients: Patient[]
@@ -9,6 +9,7 @@ interface PatientContextValue {
   error: string | null
   selectPatient: (id: string) => void
   setJourneyStage: (stage: JourneyStage) => Promise<void>
+  setDataAccess: (dataAccess: DataAccessLevel) => Promise<void>
   refreshPatients: () => Promise<void>
 }
 
@@ -57,6 +58,12 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     setPatients((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
   }
 
+  const setDataAccess = async (dataAccess: DataAccessLevel) => {
+    if (!selected) return
+    const updated = await api.updateDataAccess(selected.id, dataAccess)
+    setPatients((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
+  }
+
   return (
     <PatientContext.Provider
       value={{
@@ -67,6 +74,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         error,
         selectPatient: setSelectedId,
         setJourneyStage,
+        setDataAccess,
         refreshPatients,
       }}
     >
