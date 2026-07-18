@@ -13,6 +13,7 @@ LOCATIONS = {
     "pelvic": "pelvic", "back": "lower_back", "abdomen": "abdomen",
 }
 TYPES = ("cramping", "sharp", "aching", "burning", "stabbing", "dull")
+NUMBER_WORDS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
 FRIENDLY_LOCATIONS = {"lower_left_pelvic": "low on your left side", "lower_right_pelvic": "low on your right side", "pelvic": "your lower tummy / pelvis", "lower_back": "your lower back", "abdomen": "your tummy", "unspecified": "an area you have not named yet"}
 
 def _match_number(pattern: str, message: str, maximum: int) -> int | None:
@@ -22,11 +23,21 @@ def _match_number(pattern: str, message: str, maximum: int) -> int | None:
     value = int(result.group(1))
     return value if 0 <= value <= maximum else None
 
+def _match_spoken_number(pattern: str, message: str, maximum: int) -> int | None:
+    result = re.search(pattern, message, re.I)
+    if not result:
+        return None
+    raw = result.group(1).lower()
+    value = int(raw) if raw.isdigit() else NUMBER_WORDS.get(raw)
+    return value if value is not None and 0 <= value <= maximum else None
+
 def extract(transcript: str, when: date) -> VoiceCheckInResult:
     message = transcript.lower()
-    pain = _match_number(r"(?:pain(?:\s+\w+){0,3}\s+(?:is|was|at)\s+|(?:a|an)\s+)(\d{1,2})\s*(?:/\s*10|out of 10)", message, 10)
-    sleep_match = re.search(r"(?:slept\s+)?(\d{1,2}(?:\.\d+)?)\s*hours?(?:\s+of)?(?:\s+sleep)?", message, re.I)
-    sleep = float(sleep_match.group(1)) if sleep_match and float(sleep_match.group(1)) <= 24 else 0
+    pain = _match_spoken_number(r"(?:pain(?:\s+\w+){0,3}\s+(?:is|was|at)\s+|(?:a|an)\s+)(\d{1,2}|zero|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:/\s*10|out of (?:10|ten))", message, 10)
+    sleep_match = re.search(r"(?:slept\s+(?:for\s+)?)?(\d{1,2}(?:\.\d+)?|zero|one|two|three|four|five|six|seven|eight|nine|ten)\s*hours?(?:\s+of)?(?:\s+sleep)?", message, re.I)
+    sleep_raw = sleep_match.group(1).lower() if sleep_match else ""
+    sleep = float(sleep_raw) if sleep_raw.isdigit() or re.fullmatch(r"\d+\.\d+", sleep_raw) else float(NUMBER_WORDS.get(sleep_raw, 0))
+    sleep = sleep if sleep <= 24 else 0
     location = next((value for phrase, value in LOCATIONS.items() if phrase in message), "unspecified")
     pain_type = next((kind for kind in TYPES if kind in message), "unspecified")
     fatigue = "high" if any(word in message for word in ("exhausted", "drained", "very tired")) else "medium" if "tired" in message else "low"
