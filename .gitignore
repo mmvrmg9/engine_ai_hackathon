@@ -215,6 +215,9 @@ frontend/.vercel/
 *.local
 *.DS_Store
 
+# Scratch demo/snapshot output (screenshots, etc. from local tool runs)
+/output/
+
 # PyPI configuration file
 .pypirc
 
