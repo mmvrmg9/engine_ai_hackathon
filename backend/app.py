@@ -2,8 +2,9 @@ import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from backend.models import Patient, DailyLog, WearableLog, JourneyStage
+from backend.models import Patient, DailyLog, WearableLog, JourneyStage, VoiceCheckIn
 from backend.services.pattern_engine import detect
+from backend.services.voice_checkin import extract
 
 DATA = Path(__file__).parent / "data/mock_patients.json"
 patients = {p.id: p for p in [Patient.model_validate(x) for x in json.loads(DATA.read_text())["patients"]]}
@@ -31,6 +32,13 @@ def patterns(pid: str):
 @app.post("/patients/{pid}/logs")
 def add_log(pid: str, log: DailyLog):
     p=patient_or_404(pid); p.daily_logs.append(log); return log
+
+@app.post("/patients/{pid}/voice-check-in")
+def voice_check_in(pid: str, check_in: VoiceCheckIn):
+    patient_or_404(pid)
+    result = extract(check_in.transcript, check_in.date)
+    audit_log.append({"patient_id": pid, "event": "voice_check_in_extracted", "transcript": check_in.transcript, "result": result.model_dump(mode="json")})
+    return result
 
 @app.post("/patients/{pid}/wearable")
 def add_wearable(pid: str, log: WearableLog):

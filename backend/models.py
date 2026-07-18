@@ -46,3 +46,13 @@ class PatternSignal(BaseModel):
     next_step: str
     escalation: bool = False
 
+class VoiceCheckIn(BaseModel):
+    transcript: str = Field(min_length=1, max_length=2000)
+    date: date
+
+class VoiceCheckInResult(BaseModel):
+    extracted_log: DailyLog
+    missing_details: list[str]
+    follow_up_questions: list[str]
+    neutral_summary: str
+    safety_note: str | None = None
