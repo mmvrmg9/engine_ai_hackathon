@@ -182,8 +182,8 @@ export function ShareSummary() {
                     onClick={() => void changeAccess(option.value)}
                     className={`w-full rounded-xl border p-3 text-left transition-colors disabled:opacity-50 ${
                       isSelected
-                        ? 'border-violet-500 bg-violet-50'
-                        : 'border-slate-200 bg-white hover:border-violet-200'
+                        ? 'border-rose-500 bg-rose-50'
+                        : 'border-slate-200 bg-white hover:border-rose-200'
                     }`}
                   >
                     <span className="flex items-center justify-between gap-3">
@@ -191,7 +191,7 @@ export function ShareSummary() {
                       <span
                         aria-hidden="true"
                         className={`h-4 w-4 rounded-full border-4 ${
-                          isSelected ? 'border-violet-600 bg-white' : 'border-slate-200 bg-white'
+                          isSelected ? 'border-rose-600 bg-white' : 'border-slate-200 bg-white'
                         }`}
                       />
                     </span>
@@ -203,9 +203,9 @@ export function ShareSummary() {
           </section>
 
           {showSharePrompt && (
-            <section className="rounded-2xl border border-violet-200 bg-violet-50 p-4">
-              <p className="text-sm font-semibold text-violet-900">Share this report with your care team?</p>
-              <p className="mt-1 text-sm leading-relaxed text-violet-800">
+            <section className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+              <p className="text-sm font-semibold text-rose-900">Share this report with your care team?</p>
+              <p className="mt-1 text-sm leading-relaxed text-rose-800">
                 This report includes your symptom history, observed patterns, and your follow-up answers.
               </p>
               <div className="mt-3 flex gap-2">
@@ -213,7 +213,7 @@ export function ShareSummary() {
                   type="button"
                   onClick={() => void sendReport(true)}
                   disabled={sharing}
-                  className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                  className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
                 >
                   {sharing ? 'Sharing...' : 'Yes, share report'}
                 </button>
@@ -221,7 +221,7 @@ export function ShareSummary() {
                   type="button"
                   onClick={() => setShowSharePrompt(false)}
                   disabled={sharing}
-                  className="rounded-xl border border-violet-200 bg-white px-4 py-2 text-sm font-semibold text-violet-800"
+                  className="rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-800"
                 >
                   Not now
                 </button>
@@ -261,12 +261,12 @@ export function ShareSummary() {
               type="button"
               onClick={handleShare}
               disabled={sharing}
-              className="w-full rounded-xl bg-violet-700 py-3 text-sm font-semibold text-white disabled:opacity-50"
+              className="w-full rounded-xl bg-rose-700 py-3 text-sm font-semibold text-white disabled:opacity-50"
             >
               {sharing ? 'Sharing report...' : 'Share with my care team'}
             </button>
           ) : (
-            <p className="rounded-xl border border-violet-200 bg-violet-50 p-3 text-sm text-violet-900">
+            <p className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
               Automated reports are enabled. Your care team will receive a report when Endo Loop finds a meaningful pattern or safety flag.
             </p>
           )}
