@@ -1,0 +1,89 @@
+{
+  "patients": [
+    {
+      "id": "P001",
+      "name": "Priya",
+      "journey_stage": "diagnosed_managing",
+      "preferences": {
+        "goals": ["fewer unpredictable flares", "clearer conversations with GP"]
+      },
+      "daily_logs": [
+        {"date": "2026-07-01", "cycle_day": 6,  "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.5, "medication_taken": false},
+        {"date": "2026-07-02", "cycle_day": 7,  "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.2, "medication_taken": false},
+        {"date": "2026-07-03", "cycle_day": 8,  "pain_score": 1, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.8, "medication_taken": false},
+        {"date": "2026-07-04", "cycle_day": 9,  "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.0, "medication_taken": false},
+        {"date": "2026-07-05", "cycle_day": 10, "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.3, "medication_taken": false},
+        {"date": "2026-07-06", "cycle_day": 11, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.8, "medication_taken": false},
+        {"date": "2026-07-07", "cycle_day": 12, "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.1, "medication_taken": false},
+        {"date": "2026-07-08", "cycle_day": 13, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.5, "medication_taken": false},
+        {"date": "2026-07-09", "cycle_day": 14, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 6.9, "medication_taken": false},
+        {"date": "2026-07-10", "cycle_day": 15, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.7, "medication_taken": false},
+        {"date": "2026-07-11", "cycle_day": 16, "pain_score": 4, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.2, "medication_taken": true},
+        {"date": "2026-07-12", "cycle_day": 17, "pain_score": 5, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "high", "sleep_hours": 5.5, "medication_taken": true},
+        {"date": "2026-07-13", "cycle_day": 18, "pain_score": 6, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 5.0, "medication_taken": true},
+        {"date": "2026-07-14", "cycle_day": 19, "pain_score": 7, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 4.5, "medication_taken": false}
+      ],
+      "wearable_logs": [
+        {"date": "2026-07-01", "hrv_ms": 43, "hrv_baseline_ms": 41, "resting_hr": 62, "skin_temp_delta_c": 0.0},
+        {"date": "2026-07-02", "hrv_ms": 42, "hrv_baseline_ms": 41, "resting_hr": 63, "skin_temp_delta_c": 0.0},
+        {"date": "2026-07-03", "hrv_ms": 44, "hrv_baseline_ms": 41, "resting_hr": 61, "skin_temp_delta_c": 0.0},
+        {"date": "2026-07-04", "hrv_ms": 41, "hrv_baseline_ms": 41, "resting_hr": 63, "skin_temp_delta_c": 0.1},
+        {"date": "2026-07-05", "hrv_ms": 42, "hrv_baseline_ms": 41, "resting_hr": 62, "skin_temp_delta_c": 0.0},
+        {"date": "2026-07-06", "hrv_ms": 40, "hrv_baseline_ms": 41, "resting_hr": 64, "skin_temp_delta_c": 0.1},
+        {"date": "2026-07-07", "hrv_ms": 41, "hrv_baseline_ms": 41, "resting_hr": 63, "skin_temp_delta_c": 0.0},
+        {"date": "2026-07-08", "hrv_ms": 39, "hrv_baseline_ms": 41, "resting_hr": 65, "skin_temp_delta_c": 0.1},
+        {"date": "2026-07-09", "hrv_ms": 40, "hrv_baseline_ms": 41, "resting_hr": 64, "skin_temp_delta_c": 0.1},
+        {"date": "2026-07-10", "hrv_ms": 39, "hrv_baseline_ms": 41, "resting_hr": 65, "skin_temp_delta_c": 0.2},
+        {"date": "2026-07-11", "hrv_ms": 38, "hrv_baseline_ms": 41, "resting_hr": 66, "skin_temp_delta_c": 0.2},
+        {"date": "2026-07-12", "hrv_ms": 36, "hrv_baseline_ms": 41, "resting_hr": 68, "skin_temp_delta_c": 0.2},
+        {"date": "2026-07-13", "hrv_ms": 34, "hrv_baseline_ms": 41, "resting_hr": 70, "skin_temp_delta_c": 0.3},
+        {"date": "2026-07-14", "hrv_ms": 32, "hrv_baseline_ms": 41, "resting_hr": 74, "skin_temp_delta_c": 0.3}
+      ]
+    },
+    {
+      "id": "P002",
+      "name": "Mei",
+      "journey_stage": "exploring",
+      "preferences": {
+        "goals": ["figure out if this is worth bringing to a doctor", "build a symptom history"]
+      },
+      "daily_logs": [
+        {"date": "2026-07-14", "cycle_day": 3, "pain_score": 6, "pain_location": "central_pelvic", "pain_type": "sharp", "bleeding": true, "gi_symptoms": ["nausea"], "fatigue": "medium", "sleep_hours": 6.0, "medication_taken": true}
+      ],
+      "wearable_logs": [
+        {"date": "2026-07-14", "hrv_ms": 45, "hrv_baseline_ms": 45, "resting_hr": 68, "skin_temp_delta_c": 0.0}
+      ]
+    },
+    {
+      "id": "P003",
+      "name": "Sam",
+      "journey_stage": "post_surgical",
+      "preferences": {
+        "goals": ["make sure recovery is on track", "know when something is actually worth flagging"]
+      },
+      "surgery_date": "2026-07-01",
+      "daily_logs": [
+        {"date": "2026-07-02", "cycle_day": null, "pain_score": 8, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "high",   "sleep_hours": 5.0, "medication_taken": true},
+        {"date": "2026-07-03", "cycle_day": null, "pain_score": 7, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "high",   "sleep_hours": 5.2, "medication_taken": true},
+        {"date": "2026-07-04", "cycle_day": null, "pain_score": 6, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 5.5, "medication_taken": true},
+        {"date": "2026-07-05", "cycle_day": null, "pain_score": 5, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 5.8, "medication_taken": true},
+        {"date": "2026-07-06", "cycle_day": null, "pain_score": 4, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 6.0, "medication_taken": true},
+        {"date": "2026-07-07", "cycle_day": null, "pain_score": 3, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 6.5, "medication_taken": false},
+        {"date": "2026-07-08", "cycle_day": null, "pain_score": 3, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 6.5, "medication_taken": false},
+        {"date": "2026-07-09", "cycle_day": null, "pain_score": 3, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 6.3, "medication_taken": false},
+        {"date": "2026-07-10", "cycle_day": null, "pain_score": 4, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 6.0, "medication_taken": false},
+        {"date": "2026-07-11", "cycle_day": null, "pain_score": 4, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 5.8, "medication_taken": true},
+        {"date": "2026-07-12", "cycle_day": null, "pain_score": 5, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 5.5, "medication_taken": true},
+        {"date": "2026-07-13", "cycle_day": null, "pain_score": 5, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "gi_symptoms": [], "fatigue": "high",   "sleep_hours": 5.3, "medication_taken": true},
+        {"date": "2026-07-14", "cycle_day": null, "pain_score": 6, "pain_location": "surgical_site", "pain_type": "aching", "bleeding": false, "heavy_bleeding": false, "fever": true, "gi_symptoms": [], "fatigue": "high", "sleep_hours": 5.0, "medication_taken": true}
+      ],
+      "wearable_logs": [
+        {"date": "2026-07-02", "hrv_ms": 30, "hrv_baseline_ms": 38, "resting_hr": 78, "skin_temp_delta_c": 0.4},
+        {"date": "2026-07-05", "hrv_ms": 34, "hrv_baseline_ms": 38, "resting_hr": 72, "skin_temp_delta_c": 0.2},
+        {"date": "2026-07-08", "hrv_ms": 37, "hrv_baseline_ms": 38, "resting_hr": 68, "skin_temp_delta_c": 0.1},
+        {"date": "2026-07-11", "hrv_ms": 36, "hrv_baseline_ms": 38, "resting_hr": 70, "skin_temp_delta_c": 0.2},
+        {"date": "2026-07-14", "hrv_ms": 33, "hrv_baseline_ms": 38, "resting_hr": 76, "skin_temp_delta_c": 0.6}
+      ]
+    }
+  ]
+}
