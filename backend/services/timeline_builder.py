@@ -34,5 +34,11 @@ def build_timeline(patient: Patient) -> list[TimelineEntry]:
         entry.hrv_baseline_ms = w.hrv_baseline_ms
         entry.resting_hr = w.resting_hr
         entry.skin_temp_delta_c = w.skin_temp_delta_c
+        entry.sleep_deep_percent = w.sleep_deep_percent
+        entry.sleep_rem_percent = w.sleep_rem_percent
+        entry.sleep_awakenings = w.sleep_awakenings
+        entry.respiratory_rate = w.respiratory_rate
+        entry.steps = w.steps
+        entry.eda_us = w.eda_us
 
     return [by_date[d] for d in sorted(by_date)]

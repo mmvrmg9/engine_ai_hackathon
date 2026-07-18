@@ -78,6 +78,12 @@ class WearableLog(BaseModel):
     hrv_baseline_ms: float = Field(gt=0)
     resting_hr: Optional[float] = None
     skin_temp_delta_c: Optional[float] = None
+    sleep_deep_percent: Optional[float] = Field(default=None, ge=0, le=100)
+    sleep_rem_percent: Optional[float] = Field(default=None, ge=0, le=100)
+    sleep_awakenings: Optional[int] = Field(default=None, ge=0)
+    respiratory_rate: Optional[float] = Field(default=None, gt=0)
+    steps: Optional[int] = Field(default=None, ge=0)
+    eda_us: Optional[float] = Field(default=None, ge=0)
 
 
 class Patient(BaseModel):
@@ -113,6 +119,12 @@ class TimelineEntry(BaseModel):
     hrv_baseline_ms: Optional[float] = None
     resting_hr: Optional[float] = None
     skin_temp_delta_c: Optional[float] = None
+    sleep_deep_percent: Optional[float] = None
+    sleep_rem_percent: Optional[float] = None
+    sleep_awakenings: Optional[int] = None
+    respiratory_rate: Optional[float] = None
+    steps: Optional[int] = None
+    eda_us: Optional[float] = None
 
 
 class EvidencePoint(BaseModel):
@@ -186,6 +198,20 @@ class ClinicianSummaryPatternEntry(BaseModel):
     confidence: ConfidenceLabel
 
 
+class ClinicianWearableEntry(BaseModel):
+    date: date_
+    hrv_ms: float
+    hrv_baseline_ms: float
+    resting_hr: Optional[float] = None
+    skin_temp_delta_c: Optional[float] = None
+    sleep_deep_percent: Optional[float] = None
+    sleep_rem_percent: Optional[float] = None
+    sleep_awakenings: Optional[int] = None
+    respiratory_rate: Optional[float] = None
+    steps: Optional[int] = None
+    eda_us: Optional[float] = None
+
+
 class ClinicianSummary(BaseModel):
     patient_id: str
     patient_name: str
@@ -193,6 +219,7 @@ class ClinicianSummary(BaseModel):
     generated_at: datetime
     headline: str
     patterns: list[ClinicianSummaryPatternEntry]
+    wearable_observations: list[ClinicianWearableEntry] = Field(default_factory=list)
     follow_up: list[FollowUpQA]
     patient_goals: list[str]
     escalation: EscalationLevel

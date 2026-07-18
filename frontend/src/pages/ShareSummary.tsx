@@ -28,6 +28,24 @@ function buildPlainText(summary: ClinicianSummary): string {
     }
   }
 
+  if (summary.wearable_observations.length > 0) {
+    lines.push('Wearable observations (last 7 recorded days):')
+    for (const w of summary.wearable_observations) {
+      const metrics = [
+        `HRV ${w.hrv_ms} ms (personal baseline ${w.hrv_baseline_ms} ms)`,
+        w.resting_hr != null ? `resting HR ${w.resting_hr} bpm` : null,
+        w.skin_temp_delta_c != null ? `skin temperature ${w.skin_temp_delta_c >= 0 ? '+' : ''}${w.skin_temp_delta_c} C from baseline` : null,
+        w.sleep_deep_percent != null ? `deep sleep ${w.sleep_deep_percent}%` : null,
+        w.sleep_rem_percent != null ? `REM sleep ${w.sleep_rem_percent}%` : null,
+        w.sleep_awakenings != null ? `awakenings ${w.sleep_awakenings}` : null,
+        w.respiratory_rate != null ? `respiratory rate ${w.respiratory_rate}/min` : null,
+        w.steps != null ? `steps ${w.steps}` : null,
+        w.eda_us != null ? `EDA ${w.eda_us} uS` : null,
+      ].filter(Boolean)
+      lines.push(`- ${formatDate(w.date)}: ${metrics.join('; ')}`)
+    }
+  }
+
   if (summary.follow_up.length > 0) {
     lines.push('')
     lines.push('Patient-reported follow-up:')
@@ -125,7 +143,7 @@ export function ShareSummary() {
                 </p>
               )}
 
-              {summary.patterns.map((p, i) => (
+            {summary.patterns.map((p, i) => (
                 <div key={i} className="border-t border-slate-100 pt-3 first:border-t-0 first:pt-0">
                   <div className="flex items-baseline justify-between gap-2">
                     <h3 className="text-sm font-semibold text-slate-900">
@@ -141,7 +159,37 @@ export function ShareSummary() {
                       <li key={j}>
                         {formatDate(e.date)} &mdash; {e.label.replace(/_/g, ' ')}: {e.value}
                       </li>
-                    ))}
+            ))}
+
+            {summary.wearable_observations.length > 0 && (
+              <div className="mt-4 border-t border-slate-100 pt-3">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  Wearable observations
+                </p>
+                <p className="mb-3 text-xs text-slate-500">
+                  Device readings are shown as observations alongside symptoms. Missing device fields are left blank rather than inferred.
+                </p>
+                <div className="space-y-2">
+                  {summary.wearable_observations.map((w) => (
+                    <div key={w.date} className="rounded-xl bg-rose-50/60 p-3 text-xs text-slate-600">
+                      <p className="mb-1 font-semibold text-slate-800">{formatDate(w.date)}</p>
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-1 sm:grid-cols-3">
+                        <span>HRV: {w.hrv_ms} ms</span>
+                        <span>Usual HRV: {w.hrv_baseline_ms} ms</span>
+                        <span>Resting HR: {w.resting_hr != null ? `${w.resting_hr} bpm` : 'Not recorded'}</span>
+                        <span>Skin temp: {w.skin_temp_delta_c != null ? `${w.skin_temp_delta_c >= 0 ? '+' : ''}${w.skin_temp_delta_c} C` : 'Not recorded'}</span>
+                        <span>Deep sleep: {w.sleep_deep_percent != null ? `${w.sleep_deep_percent}%` : 'Not recorded'}</span>
+                        <span>REM sleep: {w.sleep_rem_percent != null ? `${w.sleep_rem_percent}%` : 'Not recorded'}</span>
+                        <span>Awakenings: {w.sleep_awakenings ?? 'Not recorded'}</span>
+                        <span>Respiratory rate: {w.respiratory_rate != null ? `${w.respiratory_rate}/min` : 'Not recorded'}</span>
+                        <span>Steps: {w.steps ?? 'Not recorded'}</span>
+                        <span>EDA: {w.eda_us != null ? `${w.eda_us} uS` : 'Not recorded'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
                   </ul>
                 </div>
               ))}

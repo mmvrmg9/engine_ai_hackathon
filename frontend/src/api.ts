@@ -49,6 +49,12 @@ export interface WearableLog {
   hrv_baseline_ms: number
   resting_hr: number | null
   skin_temp_delta_c: number | null
+  sleep_deep_percent: number | null
+  sleep_rem_percent: number | null
+  sleep_awakenings: number | null
+  respiratory_rate: number | null
+  steps: number | null
+  eda_us: number | null
 }
 
 export interface Patient {
@@ -149,6 +155,7 @@ export interface ClinicianSummary {
   generated_at: string
   headline: string
   patterns: ClinicianSummaryPatternEntry[]
+  wearable_observations: WearableLog[]
   follow_up: FollowUpQA[]
   patient_goals: string[]
   escalation: EscalationLevel

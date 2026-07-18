@@ -14,6 +14,7 @@ from typing import Optional
 from models import (
     ClinicianSummary,
     ClinicianSummaryPatternEntry,
+    ClinicianWearableEntry,
     EscalationLevel,
     FollowUpAnswer,
     FollowUpQA,
@@ -68,6 +69,10 @@ def build_summary(
         generated_at=datetime.now(timezone.utc),
         headline=_HEADLINES[patient.journey_stage],
         patterns=pattern_entries,
+        wearable_observations=[
+            ClinicianWearableEntry.model_validate(w.model_dump())
+            for w in sorted(patient.wearable_logs, key=lambda item: item.date)[-7:]
+        ],
         follow_up=follow_up,
         patient_goals=patient.preferences.goals,
         escalation=escalation,
