@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: endo-loop-backend
+    name: engine-ai-hackathon-backend
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
