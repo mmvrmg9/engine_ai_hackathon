@@ -16,6 +16,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/src/lib/
+!frontend/src/lib/**
 parts/
 sdist/
 var/
@@ -211,6 +213,7 @@ node_modules/
 frontend/dist/
 frontend/.vercel/
 *.local
+*.DS_Store
 
 # PyPI configuration file
 .pypirc

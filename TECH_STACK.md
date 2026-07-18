@@ -12,16 +12,17 @@
 - Python, **FastAPI** (+ CORS middleware) as the web framework
 - **Uvicorn** (ASGI server)
 - **Pydantic** (data models/validation, `models.py`)
-- **Anthropic SDK** — calls Claude (`claude-opus-4-8` by default, overridable via `ENDO_LOOP_LLM_MODEL`) for the AI coach follow-up questions
+- **Anthropic SDK (optional)** — calls Claude for AI coach follow-up questions and wording when `ANTHROPIC_API_KEY` is configured; deterministic fallback is used otherwise
 - Custom services: pattern engine, safety rules, timeline builder, clinician summary, audit log, language guard
 - **pytest** + **httpx** for testing
 - Deployed on **Render** (`render.yaml`), free web service plan
 
 ## Data
 - Mock patient data as JSON (`backend/data/mock_patients.json`) — no external database in this phase
+- Wearable data is validated by `WearableLog`: HRV/baseline, resting heart rate, skin temperature deviation, sleep architecture, awakenings, respiratory rate, steps, and optional EDA. The latest seven entries are included in the clinician summary; missing fields remain unrecorded.
 
 ## Architecture
-Split deployment — React frontend on Vercel talking to a FastAPI backend on Render, with Claude (Anthropic API) powering the LLM-driven follow-up question logic.
+Split deployment — React frontend on Vercel talking to a FastAPI backend on Render. Claude is optional and only phrases already-detected patterns and questions.
 
 ## Deployment (this repo)
 - **Frontend:** https://engine-ai-hackathon-frontend.vercel.app (Vercel project `engine-ai-hackathon-frontend`, deployed from `frontend/`)
