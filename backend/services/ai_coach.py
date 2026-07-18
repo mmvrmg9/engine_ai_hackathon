@@ -36,7 +36,7 @@ SYSTEM_PROMPT = """You are a clinical-documentation assistant embedded in Endo L
 A separate deterministic rules engine has ALREADY decided which pattern(s) exist and their exact evidence. You never introduce a new pattern, a causal claim, a diagnosis, a staging claim, or a medication instruction.
 
 Hard constraints:
-- Never say "you have", "this is", "this means", or name a specific condition (endometriosis, central sensitization, etc.) as fact.
+- Never say "you have", "this is", "this means", or name a specific condition (endometriosis, central sensitisation, etc.) as fact.
 - Use only association language: "may be associated with", "worth discussing", "worth mentioning to your care team".
 - Never suggest a medication, a dose, or a medication change.
 - Describe HRV only as "a personal trend signal" -- explicitly never a stand-alone marker of pain severity.
@@ -68,7 +68,7 @@ _NEXT_STEP_TEMPLATES: dict[JourneyStage, str] = {
         "This history will help your clinician evaluate what's happening."
     ),
     JourneyStage.DIAGNOSED_MANAGING: (
-        "Prioritize rest and pacing over the next few days, keep your usual medication "
+        "Prioritise rest and pacing over the next few days, keep your usual medication "
         "routine as prescribed by your care team, and mention this flare pattern at your next visit."
     ),
     JourneyStage.POST_SURGICAL: (
@@ -186,8 +186,8 @@ def _explanation_prompt(patient: Patient, patterns: list[PatternSignal], next_st
         f"Detected pattern(s):\n{evidence_summary}\n\n"
         f"Write a short plain-language explanation (2-3 sentences) tying these patterns "
         f"together for the patient, and a short safe next step. The safe next step must stay "
-        f"behavioral/self-care (sleep, pacing, logging, contacting care team) -- never medication "
-        f"dosing advice. Use this as your safe next step unless a clearly better behavioral "
+        f"behavioural/self-care (sleep, pacing, logging, contacting care team) -- never medication "
+        f"dosing advice. Use this as your safe next step unless a clearly better behavioural "
         f"phrasing of the same idea occurs to you: \"{next_step}\"\n"
         f'Return ONLY JSON: {{"explanation": "...", "next_step": "..."}}'
     )

@@ -10,7 +10,7 @@ The React app has four screens:
 
 - **Today**: the quick daily log, the latest pattern status, safety messaging, and one inline follow-up question.
 - **My Patterns**: evidence-backed pattern cards and the exact dates/data points behind them.
-- **Share with my care team**: a printable/copyable clinician summary containing patterns, follow-up answers, safety flags, and wearable observations.
+- **Share with my care team**: a printable/copyable clinician summary containing patterns, follow-up answers, safety flags, and wearable observations, plus a report-privacy control (private / ask each time / automated) that governs whether and how the summary can be shared.
 - **Journey Stage**: patient-selected context that changes wording and next-step framing without assigning a diagnosis.
 
 The Today screen offers two ways to log the same `DailyLog` structure:
@@ -72,6 +72,7 @@ frontend/
   src/components/                Logging, voice, evidence and navigation UI
   src/lib/labels.ts              Shared patient-facing labels and date helpers
   package.json                   Frontend scripts and dependencies
+  vercel.json                    SPA rewrite so client-side routes work on direct navigation
 requirements.txt                 Backend dependencies used by Render/local setup
 render.yaml                      Backend deployment configuration
 ```
@@ -83,7 +84,7 @@ From the repository root:
 ```bash
 python -m venv .venv
 source .venv/bin/activate       # macOS/Linux
-# .venv\\Scripts\\activate     # Windows
+# .venv\Scripts\activate       # Windows
 pip install -r requirements.txt
 ```
 
@@ -115,6 +116,8 @@ Useful API routes include:
 | `GET` | `/patients/{id}/timeline` | Merge symptoms and wearable data by date |
 | `GET` | `/patients/{id}/patterns` | Run deterministic patterns and safety rules |
 | `GET` | `/patients/{id}/clinician-summary` | Build the exportable GP summary |
+| `PATCH` | `/patients/{id}/data-access` | Set the patient's report-sharing preference |
+| `POST` | `/patients/{id}/clinician-summary/share` | Share the summary per that preference (403 if private) |
 | `GET` | `/audit-log` | Inspect demo audit events |
 
 ## Tests and builds
@@ -130,7 +133,7 @@ npm run build
 
 ## Optional AI wording
 
-The optional Anthropic integration is configured with `ANTHROPIC_API_KEY` and `ENDO_LOOP_LLM_MODEL`. It is not required to run the app. The deterministic fallback remains the source of truth for safe behavior, and `language_guard.py` rejects diagnostic, causal, or medication-change wording.
+The optional Anthropic integration is configured with `ANTHROPIC_API_KEY` and `ENDO_LOOP_LLM_MODEL`. It is not required to run the app. The deterministic fallback remains the source of truth for safe behaviour, and `language_guard.py` rejects diagnostic, causal, or medication-change wording.
 
 ## Safety boundaries
 

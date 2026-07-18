@@ -14,6 +14,7 @@ BANNED_PHRASES = [
     "you have endometriosis",
     "this is endometriosis",
     "central sensitization",
+    "central sensitisation",
     "diagnos",  # catches diagnosis / diagnose / diagnostic
     "increase your dose",
     "decrease your dose",
