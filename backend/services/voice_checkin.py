@@ -36,6 +36,7 @@ _LOCATIONS = {
     "back": "lower_back",
 }
 _TYPES = ("cramping", "sharp", "aching", "burning", "pressure", "stabbing", "dull")
+_NUMBER_WORDS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
 _FRIENDLY_LOCATIONS = {
     "lower_left_pelvic": "low on your left side",
     "lower_right_pelvic": "low on your right side",
@@ -52,17 +53,27 @@ def _match_number(pattern: str, message: str, maximum: int) -> Optional[int]:
     value = int(result.group(1))
     return value if 0 <= value <= maximum else None
 
+def _match_spoken_number(pattern: str, message: str, maximum: int) -> Optional[int]:
+    result = re.search(pattern, message, re.I)
+    if not result:
+        return None
+    raw = result.group(1).lower()
+    value = int(raw) if raw.isdigit() else _NUMBER_WORDS.get(raw)
+    return value if value is not None and 0 <= value <= maximum else None
+
 
 def extract(transcript: str, when: date_) -> VoiceCheckInResult:
     message = transcript.lower()
 
-    pain = _match_number(
-        r"(?:pain(?:\s+\w+){0,3}\s+(?:is|was|at)\s+|(?:a|an)\s+)(\d{1,2})\s*(?:/\s*10|out of 10)",
+    pain = _match_spoken_number(
+        r"(?:pain(?:\s+\w+){0,3}\s+(?:is|was|at)\s+|(?:a|an)\s+)(\d{1,2}|zero|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:/\s*10|out of (?:10|ten))",
         message,
         10,
     )
-    sleep_match = re.search(r"(\d{1,2}(?:\.\d+)?)\s*hours?(?:\s+of)?(?:\s+sleep)?", message, re.I)
-    sleep = float(sleep_match.group(1)) if sleep_match and float(sleep_match.group(1)) <= 24 else None
+    sleep_match = re.search(r"(?:slept\s+(?:for\s+)?)?(\d{1,2}(?:\.\d+)?|zero|one|two|three|four|five|six|seven|eight|nine|ten)\s*hours?(?:\s+of)?(?:\s+sleep)?", message, re.I)
+    sleep_raw = sleep_match.group(1).lower() if sleep_match else ""
+    sleep = float(sleep_raw) if sleep_raw.isdigit() or re.fullmatch(r"\d+\.\d+", sleep_raw) else float(_NUMBER_WORDS.get(sleep_raw, 0))
+    sleep = sleep if sleep <= 24 else None
     location = next((value for phrase, value in _LOCATIONS.items() if phrase in message), None)
     pain_type = next((kind for kind in _TYPES if kind in message), None)
     fatigue = (
@@ -79,8 +90,10 @@ def extract(transcript: str, when: date_) -> VoiceCheckInResult:
     ]
     gi_known = bool(gi_symptoms) or any(
         phrase in message
-        for phrase in ("no tummy", "no stomach", "no bowel", "no gi", "no digestive", "nothing else")
+        for phrase in ("no nausea", "not nauseous", "no tummy", "no stomach", "no bowel", "no gi", "no digestive", "nothing else")
     )
+    stress_known = any(phrase in message for phrase in ("stressed", "stressful", "anxious", "relaxed", "no stress"))
+    stress_level = "low" if any(phrase in message for phrase in ("not stressed", "no stress", "relaxed")) else "high" if any(phrase in message for phrase in ("very stressed", "really stressed", "overwhelmed", "anxious")) else "medium" if "stressed" in message or "stressful" in message else None
     medication_taken = any(
         phrase in message for phrase in ("took my medication", "medication taken", "took pain relief")
     )
@@ -94,6 +107,7 @@ def extract(transcript: str, when: date_) -> VoiceCheckInResult:
         fever=fever,
         gi_symptoms=gi_symptoms,
         fatigue=fatigue,
+        stress_level=stress_level,
         sleep_hours=sleep,
         medication_taken=medication_taken,
     )
@@ -109,6 +123,8 @@ def extract(transcript: str, when: date_) -> VoiceCheckInResult:
         missing.append("how much you slept")
     if not gi_known:
         missing.append("whether you have noticed any tummy or bowel symptoms")
+    if not stress_known:
+        missing.append("whether today has felt more stressful than usual")
 
     questions: list[str] = []
     if pain is None:
@@ -121,9 +137,11 @@ def extract(transcript: str, when: date_) -> VoiceCheckInResult:
         questions.append("Roughly how many hours did you sleep last night?")
     if not gi_known and len(questions) < 2:
         questions.append(
-            "Have you noticed any tummy or bowel symptoms today -- for example bloating, nausea, "
+            "Have you felt nauseous or noticed any tummy or bowel symptoms today -- for example bloating, nausea, "
             "constipation or diarrhoea? It's completely fine if not."
         )
+    if not stress_known and len(questions) < 2:
+        questions.append("Has today felt more stressful than usual? A simple yes, no, or a few words is enough.")
 
     summary_parts = [f"Pain recorded as {log.pain_score}/10" if pain is not None else "Pain score not yet recorded"]
     if location is not None:
@@ -132,6 +150,8 @@ def extract(transcript: str, when: date_) -> VoiceCheckInResult:
         summary_parts.append(f"it feels {pain_type}")
     if sleep is not None:
         summary_parts.append(f"sleep: {sleep:g} hours")
+    if stress_known:
+        summary_parts.append(f"stress: {stress_level}")
 
     safety_note = (
         "You mentioned fever, chills, or a temperature -- please follow your care plan and contact "

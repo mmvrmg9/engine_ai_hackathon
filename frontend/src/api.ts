@@ -38,6 +38,7 @@ export interface DailyLog {
   fever: boolean
   gi_symptoms: string[]
   fatigue: FatigueLevel | null
+  stress_level: string | null
   sleep_hours: number | null
   medication_taken: boolean
 }
