@@ -210,18 +210,23 @@ Four mobile-first screens (React + Vite + Tailwind + Recharts), navigable via
 the bottom tab bar, with a patient switcher in the header for the demo (no
 auth -- a real deployment would replace this with a logged-in patient):
 
-- **Today** -- the daily log (pain, location, type, bleeding/fever/medication
-  toggles, GI symptoms, fatigue, sleep, cycle day), the latest AI-phrased
-  pattern status and safe next step, any active safety escalation banner, and
-  one pending follow-up question to answer inline. A **Voice check-in** toggle
-  offers an accessible alternative: speak (or type) a free-text description of
-  the day, and `backend/services/voice_checkin.py` -- a deterministic
-  regex/keyword parser, not an LLM -- extracts a draft `DailyLog`, lists any
-  missing details, and asks up to two follow-up questions. The draft is always
-  shown for review before `POST /patients/{id}/logs` actually saves it, so the
-  normal pattern engine and safety rules run over it exactly as they would
-  over a manually-typed log. Originally built by Vossco Nguyen on a parallel
-  branch and ported into this build's architecture.
+- **Today** -- the daily log (a tap-friendly 0-10 pain scale, location, type,
+  bleeding/fever/medication toggles, GI symptoms, fatigue, a +/- sleep-hours
+  stepper, cycle day), the latest AI-phrased pattern status and safe next
+  step, any active safety escalation banner, and one pending follow-up
+  question to answer inline. A **Voice check-in** toggle (also reachable via
+  the floating **Talk to Endo Loop** button) offers an accessible
+  alternative: speak -- continuously, through natural pauses, no need to
+  re-tap the mic -- or type, across as many turns as needed ("Continue
+  conversation" accumulates what's been said so far). On each turn,
+  `backend/services/voice_checkin.py` -- a deterministic regex/keyword
+  parser, not an LLM -- extracts a draft `DailyLog` from the full
+  conversation so far, lists any missing details, and asks up to two
+  follow-up questions. The draft is always shown for review before
+  `POST /patients/{id}/logs` actually saves it, so the normal pattern engine
+  and safety rules run over it exactly as they would over a manually-typed
+  log. Originally built by Vossco Nguyen on a parallel branch and ported
+  into this build's architecture, including the rose color theme.
 - **My Patterns** -- a pain-over-time chart (Recharts) plus a card per
   pattern with its plain-language message, a confidence badge, and an
   evidence drawer showing the exact data points and baseline comparison

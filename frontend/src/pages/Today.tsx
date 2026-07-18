@@ -14,6 +14,7 @@ export function Today() {
   const [answeringId, setAnsweringId] = useState<string | null>(null)
   const [justAnswered, setJustAnswered] = useState(false)
   const [logMode, setLogMode] = useState<'manual' | 'voice'>('manual')
+  const [voiceStartSignal, setVoiceStartSignal] = useState(0)
 
   const load = useCallback(async () => {
     if (!selected) return
@@ -40,6 +41,11 @@ export function Today() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const startVoiceCheckIn = () => {
+    setLogMode('voice')
+    setVoiceStartSignal((s) => s + 1)
   }
 
   const pendingQuestion = patterns?.follow_up_questions[0]
@@ -137,8 +143,25 @@ export function Today() {
           submitting={submitting}
         />
       ) : (
-        <VoiceCheckIn patientId={selected.id} onSaved={load} />
+        <VoiceCheckIn
+          key={selected.id}
+          patientId={selected.id}
+          onSaved={load}
+          startSignal={voiceStartSignal}
+        />
       )}
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 no-print">
+        <div className="mx-auto max-w-md px-4">
+          <button
+            type="button"
+            onClick={startVoiceCheckIn}
+            className="pointer-events-auto ml-auto block rounded-full bg-rose-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-rose-900/20 transition-colors hover:bg-rose-700"
+          >
+            Talk to Endo Loop
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

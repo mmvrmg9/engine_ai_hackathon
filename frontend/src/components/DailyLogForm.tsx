@@ -99,7 +99,7 @@ export function DailyLogForm({
               aria-label={`Pain ${n} out of 10`}
               aria-pressed={n === painScore}
               className={`h-9 w-9 shrink-0 rounded-full text-sm font-semibold transition-colors ${
-                n === painScore
+                n <= painScore
                   ? 'bg-rose-600 text-white shadow-sm'
                   : 'bg-rose-50 text-rose-800 hover:bg-rose-100'
               }`}

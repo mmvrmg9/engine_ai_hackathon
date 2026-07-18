@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api, type VoiceCheckInResult } from '../api'
 import { todayISODate } from '../lib/labels'
 
@@ -33,30 +33,32 @@ function getSpeechRecognition(): (new () => SpeechRecognitionLike) | null {
 export function VoiceCheckIn({
   patientId,
   onSaved,
+  startSignal,
 }: {
   patientId: string
   onSaved: () => void | Promise<void>
+  /** Bump this number to (re)start listening from outside, e.g. a quick-access button. */
+  startSignal?: number
 }) {
-  const [transcript, setTranscript] = useState('')
+  const [input, setInput] = useState('')
+  const [conversation, setConversation] = useState('')
   const [listening, setListening] = useState(false)
-  const [status, setStatus] = useState('Tap the microphone to talk, or type below.')
+  const [status, setStatus] = useState('Tap to talk. I will keep listening through natural pauses.')
   const [result, setResult] = useState<VoiceCheckInResult | null>(null)
   const [reviewing, setReviewing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
+  const shouldListenRef = useRef(false)
   const supportsVoice = getSpeechRecognition() !== null
 
-  const toggleListening = () => {
-    if (listening) {
-      recognitionRef.current?.stop()
-      return
-    }
+  const startListening = () => {
     const Recognition = getSpeechRecognition()
     if (!Recognition) {
-      setStatus('Voice recognition is not available in this browser -- you can still type below.')
+      setStatus("Voice recognition is not available in this browser -- you can still type below.")
       return
     }
+    shouldListenRef.current = true
     const recognition = new Recognition()
     recognitionRef.current = recognition
     recognition.lang = 'en-GB'
@@ -64,27 +66,64 @@ export function VoiceCheckIn({
     recognition.continuous = true
     recognition.onstart = () => {
       setListening(true)
-      setStatus('Listening -- take your time, tap the microphone again when done.')
+      setStatus('Listening. Take your time -- tap the microphone whenever you are ready to pause.')
     }
     recognition.onresult = (e) => {
-      setTranscript(Array.from(e.results, (r) => r[0].transcript).join(''))
+      setInput(Array.from(e.results, (r) => r[0].transcript).join(''))
     }
     recognition.onerror = () => {
-      setStatus('Paused listening. Your words are still here -- tap the microphone to continue.')
+      setStatus('I paused listening. Your words are still here -- tap the microphone to continue.')
     }
     recognition.onend = () => {
-      setListening(false)
-      setStatus('Paused. Review what you said, or tap the microphone to continue.')
+      if (shouldListenRef.current) {
+        // Chrome ends a recognition session after a natural pause even in
+        // continuous mode -- restart it so listening feels uninterrupted
+        // until the patient explicitly stops.
+        setTimeout(() => {
+          try {
+            recognition.start()
+          } catch {
+            // A stop() landed in the same tick as this restart -- ignore.
+          }
+        }, 350)
+      } else {
+        setListening(false)
+        setStatus('Paused. Review what you said, or tap the microphone to continue.')
+      }
     }
     recognition.start()
   }
 
+  const stopListening = () => {
+    shouldListenRef.current = false
+    recognitionRef.current?.stop()
+    setListening(false)
+  }
+
+  const toggleListening = () => {
+    if (listening) stopListening()
+    else startListening()
+  }
+
+  useEffect(() => {
+    if (startSignal && !listening) startListening()
+    return () => {
+      shouldListenRef.current = false
+      recognitionRef.current?.stop()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startSignal])
+
   const review = async () => {
-    if (!transcript.trim()) return
-    setReviewing(true)
+    const newWords = input.trim()
+    if (!newWords) return
+    const fullConversation = conversation ? `${conversation} ${newWords}` : newWords
+    setConversation(fullConversation)
+    setInput('')
     setSaved(false)
+    setReviewing(true)
     try {
-      const draft = await api.voiceCheckIn(patientId, { transcript: transcript.trim(), date: todayISODate() })
+      const draft = await api.voiceCheckIn(patientId, { transcript: fullConversation, date: todayISODate() })
       setResult(draft)
     } finally {
       setReviewing(false)
@@ -99,7 +138,8 @@ export function VoiceCheckIn({
       await onSaved()
       setSaved(true)
       setResult(null)
-      setTranscript('')
+      setConversation('')
+      setInput('')
     } finally {
       setSaving(false)
     }
@@ -110,8 +150,8 @@ export function VoiceCheckIn({
       <div>
         <p className="text-sm font-semibold text-rose-900">Voice check-in</p>
         <p className="text-xs text-rose-700">
-          Tell me what today has been like -- pain, sleep, anything else. I'll draft today's log for you to
-          review before it's saved.
+          Tell me what today has been like -- pain, sleep, anything else. Take your time; I'll ask up to
+          two gentle follow-up questions and always show you a draft to review before it's saved.
         </p>
       </div>
 
@@ -120,7 +160,7 @@ export function VoiceCheckIn({
           type="button"
           onClick={toggleListening}
           aria-pressed={listening}
-          aria-label={listening ? 'Stop listening' : 'Start talking'}
+          aria-label={listening ? 'Pause listening' : 'Start talking'}
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white transition-colors ${
             listening ? 'animate-pulse bg-emerald-600' : 'bg-rose-600 hover:bg-rose-700'
           }`}
@@ -137,9 +177,9 @@ export function VoiceCheckIn({
       )}
 
       <textarea
-        value={transcript}
-        onChange={(e) => setTranscript(e.target.value)}
-        placeholder="e.g. Today has been difficult. The pain is 7 out of 10, low on my left side, and I slept about 4 hours."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Start wherever feels easiest. For example: Today has been difficult. The pain is 7 out of 10, low on my left side, and I slept about 4 hours."
         rows={3}
         className="w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm focus:border-rose-500 focus:outline-none"
       />
@@ -147,20 +187,20 @@ export function VoiceCheckIn({
       <button
         type="button"
         onClick={review}
-        disabled={!transcript.trim() || reviewing}
+        disabled={!input.trim() || reviewing}
         className="rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
       >
-        {reviewing ? 'Listening for details...' : 'Continue'}
+        {reviewing ? 'Listening for details...' : 'Continue conversation'}
       </button>
 
       {result && (
         <div className="space-y-3 rounded-xl border border-rose-200 bg-white p-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">What I heard</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">What I've heard so far</p>
             <p className="text-sm text-slate-700">{result.neutral_summary}</p>
           </div>
 
-          {result.follow_up_questions.length > 0 && (
+          {result.follow_up_questions.length > 0 ? (
             <div className="rounded-lg bg-rose-50 p-3">
               {result.follow_up_questions.map((q) => (
                 <p key={q} className="text-sm text-rose-800">
@@ -168,9 +208,13 @@ export function VoiceCheckIn({
                 </p>
               ))}
               <p className="mt-1 text-xs text-rose-500">
-                Add more detail above and tap Continue, or save as-is -- you can edit later.
+                Answer above and tap Continue conversation to add more, or save as-is -- you can edit later.
               </p>
             </div>
+          ) : (
+            <p className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+              Thank you -- you've shared the key details for this check-in.
+            </p>
           )}
 
           {result.safety_note && (
