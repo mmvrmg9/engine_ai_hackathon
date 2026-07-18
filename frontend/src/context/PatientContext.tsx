@@ -1,19 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { api, type DataAccessLevel, type JourneyStage, type Patient } from '../api'
-
-interface PatientContextValue {
-  patients: Patient[]
-  selectedId: string
-  selected: Patient | null
-  loading: boolean
-  error: string | null
-  selectPatient: (id: string) => void
-  setJourneyStage: (stage: JourneyStage) => Promise<void>
-  setDataAccess: (dataAccess: DataAccessLevel) => Promise<void>
-  refreshPatients: () => Promise<void>
-}
-
-const PatientContext = createContext<PatientContextValue | null>(null)
+import { useEffect, useState, type ReactNode } from 'react'
+import { api, type JourneyStage, type Patient, type DataAccessLevel } from '../api'
+import { PatientContext } from './usePatientContext'
 
 const LAST_PATIENT_KEY = 'endo-loop:selected-patient'
 
@@ -81,10 +68,4 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       {children}
     </PatientContext.Provider>
   )
-}
-
-export function usePatientContext() {
-  const ctx = useContext(PatientContext)
-  if (!ctx) throw new Error('usePatientContext must be used within a PatientProvider')
-  return ctx
 }

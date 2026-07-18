@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { JourneyStage } from '../api'
-import { usePatientContext } from '../context/PatientContext'
+import { usePatientContext } from '../context/usePatientContext'
 import { JOURNEY_STAGE_DESCRIPTIONS, JOURNEY_STAGE_LABELS } from '../lib/labels'
 
 const STAGES: JourneyStage[] = [

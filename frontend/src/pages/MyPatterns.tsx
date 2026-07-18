@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { api, type PatternsResponse, type TimelineEntry } from '../api'
-import { usePatientContext } from '../context/PatientContext'
+import { usePatientContext } from '../context/usePatientContext'
 import { PatternCard } from '../components/PatternCard'
 import { EscalationBanner } from '../components/EscalationBanner'
 import { formatDate } from '../lib/labels'

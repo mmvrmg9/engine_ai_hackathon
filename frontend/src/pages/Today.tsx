@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, type DailyLog, type PatternsResponse } from '../api'
-import { usePatientContext } from '../context/PatientContext'
+import { usePatientContext } from '../context/usePatientContext'
 import { DailyLogForm } from '../components/DailyLogForm'
 import { EscalationBanner } from '../components/EscalationBanner'
 import { VoiceCheckIn } from '../components/VoiceCheckIn'

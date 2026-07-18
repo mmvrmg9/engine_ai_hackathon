@@ -1,4 +1,4 @@
-import { usePatientContext } from '../context/PatientContext'
+import { usePatientContext } from '../context/usePatientContext'
 import { JOURNEY_STAGE_LABELS } from '../lib/labels'
 
 export function PatientSwitcher() {

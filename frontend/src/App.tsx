@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
-import { PatientProvider, usePatientContext } from './context/PatientContext'
+import { PatientProvider } from './context/PatientContext'
+import { usePatientContext } from './context/usePatientContext'
 import { PatientSwitcher } from './components/PatientSwitcher'
 import { BottomNav } from './components/BottomNav'
 import { Today } from './pages/Today'

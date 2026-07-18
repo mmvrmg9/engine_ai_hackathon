@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type ClinicianSummary, type DataAccessLevel } from '../api'
-import { usePatientContext } from '../context/PatientContext'
+import { usePatientContext } from '../context/usePatientContext'
 import { EscalationBanner } from '../components/EscalationBanner'
 import { CONFIDENCE_LABELS, JOURNEY_STAGE_LABELS, PATTERN_TYPE_LABELS, formatDate } from '../lib/labels'
 
