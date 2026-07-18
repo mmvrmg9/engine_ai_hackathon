@@ -3,6 +3,7 @@ import { api, type DailyLog, type PatternsResponse } from '../api'
 import { usePatientContext } from '../context/PatientContext'
 import { DailyLogForm } from '../components/DailyLogForm'
 import { EscalationBanner } from '../components/EscalationBanner'
+import { VoiceCheckIn } from '../components/VoiceCheckIn'
 
 export function Today() {
   const { selected } = usePatientContext()
@@ -12,6 +13,7 @@ export function Today() {
   const [answerDraft, setAnswerDraft] = useState('')
   const [answeringId, setAnsweringId] = useState<string | null>(null)
   const [justAnswered, setJustAnswered] = useState(false)
+  const [logMode, setLogMode] = useState<'manual' | 'voice'>('manual')
 
   const load = useCallback(async () => {
     if (!selected) return
@@ -111,11 +113,32 @@ export function Today() {
         </>
       )}
 
-      <DailyLogForm
-        showCycleDay={selected.journey_stage !== 'post_surgical'}
-        onSubmit={handleLog}
-        submitting={submitting}
-      />
+      <div className="flex gap-2 text-sm font-semibold">
+        <button
+          type="button"
+          onClick={() => setLogMode('manual')}
+          className={`rounded-full px-3 py-1.5 ${logMode === 'manual' ? 'bg-violet-600 text-white' : 'bg-white text-slate-500'}`}
+        >
+          Log today
+        </button>
+        <button
+          type="button"
+          onClick={() => setLogMode('voice')}
+          className={`rounded-full px-3 py-1.5 ${logMode === 'voice' ? 'bg-violet-600 text-white' : 'bg-white text-slate-500'}`}
+        >
+          Voice check-in
+        </button>
+      </div>
+
+      {logMode === 'manual' ? (
+        <DailyLogForm
+          showCycleDay={selected.journey_stage !== 'post_surgical'}
+          onSubmit={handleLog}
+          submitting={submitting}
+        />
+      ) : (
+        <VoiceCheckIn patientId={selected.id} onSaved={load} />
+      )}
     </div>
   )
 }

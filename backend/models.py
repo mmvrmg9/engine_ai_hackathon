@@ -202,9 +202,28 @@ class ClinicianSummary(BaseModel):
 class AuditEntry(BaseModel):
     timestamp: datetime
     patient_id: str
-    entry_type: str  # "pattern" | "escalation"
+    entry_type: str  # "pattern" | "escalation" | "follow_up_question" | "follow_up_answer" | "voice_check_in"
     pattern_type: Optional[PatternType] = None
     rule_version: str
     evidence_count: int
     sample_count: Optional[int] = None
     displayed_text: str
+
+
+class VoiceCheckIn(BaseModel):
+    """A raw spoken (or typed-as-fallback) check-in, not yet reviewed."""
+
+    transcript: str = Field(min_length=1, max_length=2000)
+    date: date_
+
+
+class VoiceCheckInResult(BaseModel):
+    """A draft DailyLog extracted from a transcript, for the patient to review
+    and edit before it's saved via POST /patients/{id}/logs -- this endpoint
+    never persists anything itself."""
+
+    extracted_log: DailyLog
+    missing_details: list[str] = Field(default_factory=list)
+    follow_up_questions: list[str] = Field(default_factory=list)
+    neutral_summary: str
+    safety_note: Optional[str] = None

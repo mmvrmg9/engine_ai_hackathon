@@ -90,20 +90,23 @@ backend/
     clinician_summary.py        # Journey-stage-adapted, exportable clinician summary
     language_guard.py           # Association-only / non-diagnostic / non-medication phrase check
     audit_log.py                # Append-only in-memory audit trail
+    voice_checkin.py            # Demo-safe transcript -> draft DailyLog extraction for the voice check-in flow
   tests/
     test_pattern_engine.py      # Covers the Phase-2 checkpoint list end to end
     test_ai_coach.py            # AI-layer guardrails: question count, safety, escalation bypass
     test_api.py                 # End-to-end API tests for the Phase 3 endpoints
+    test_voice_checkin.py       # Voice check-in extraction + endpoint tests
 frontend/
   src/
     api.ts                      # Fetch client + types mirroring backend/models.py exactly
     context/PatientContext.tsx  # Selected demo patient, shared across pages
     lib/labels.ts                # Journey-stage / pattern-type / confidence copy, in one place
-    pages/Today.tsx              # Quick log, latest pattern status, one pending question
+    pages/Today.tsx              # Quick log, latest pattern status, one pending question, voice check-in toggle
     pages/MyPatterns.tsx         # Pain-trend chart (Recharts) + pattern cards with evidence
     pages/ShareSummary.tsx       # Printable/exportable clinician summary
     pages/JourneyStage.tsx       # Journey stage picker -- revisable any time
     components/DailyLogForm.tsx  # <30s daily log (pain, location, type, GI, fatigue, sleep, safety flags)
+    components/VoiceCheckIn.tsx  # Accessible spoken/typed check-in -- drafts a DailyLog for review before saving
     components/PatternCard.tsx   # Plain-language pattern + confidence badge + accept/dismiss feedback
     components/EvidenceDrawer.tsx # Exact evidence points + baseline note + rule version
 requirements.txt
@@ -170,6 +173,7 @@ question logic. See [TECH_STACK.md](TECH_STACK.md) for the full stack and
 |---|---|---|
 | `GET`   | `/patients` | List all patients (convenience) |
 | `POST`  | `/patients/{id}/logs` | Add/replace a daily symptom log |
+| `POST`  | `/patients/{id}/voice-check-in` | Extract a draft daily log from a transcript (read-only -- does not save) |
 | `POST`  | `/patients/{id}/wearable` | Add/replace a wearable (HRV/HR/temp) log |
 | `GET`   | `/patients/{id}/timeline` | Combined chronological timeline |
 | `GET`   | `/patients/{id}/patterns` | Deterministic pattern results + evidence + escalation + AI explanation/next-step/follow-up questions |
@@ -209,7 +213,15 @@ auth -- a real deployment would replace this with a logged-in patient):
 - **Today** -- the daily log (pain, location, type, bleeding/fever/medication
   toggles, GI symptoms, fatigue, sleep, cycle day), the latest AI-phrased
   pattern status and safe next step, any active safety escalation banner, and
-  one pending follow-up question to answer inline.
+  one pending follow-up question to answer inline. A **Voice check-in** toggle
+  offers an accessible alternative: speak (or type) a free-text description of
+  the day, and `backend/services/voice_checkin.py` -- a deterministic
+  regex/keyword parser, not an LLM -- extracts a draft `DailyLog`, lists any
+  missing details, and asks up to two follow-up questions. The draft is always
+  shown for review before `POST /patients/{id}/logs` actually saves it, so the
+  normal pattern engine and safety rules run over it exactly as they would
+  over a manually-typed log. Originally built by Vossco Nguyen on a parallel
+  branch and ported into this build's architecture.
 - **My Patterns** -- a pain-over-time chart (Recharts) plus a card per
   pattern with its plain-language message, a confidence badge, and an
   evidence drawer showing the exact data points and baseline comparison

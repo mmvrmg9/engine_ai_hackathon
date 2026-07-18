@@ -155,6 +155,19 @@ export interface ClinicianSummary {
   insufficient_data: boolean
 }
 
+export interface VoiceCheckIn {
+  transcript: string
+  date: string
+}
+
+export interface VoiceCheckInResult {
+  extracted_log: DailyLog
+  missing_details: string[]
+  follow_up_questions: string[]
+  neutral_summary: string
+  safety_note: string | null
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -187,5 +200,10 @@ export const api = {
     request<Patient>(`/patients/${patientId}/journey-stage`, {
       method: 'PATCH',
       body: JSON.stringify({ journey_stage: stage }),
+    }),
+  voiceCheckIn: (patientId: string, checkIn: VoiceCheckIn) =>
+    request<VoiceCheckInResult>(`/patients/${patientId}/voice-check-in`, {
+      method: 'POST',
+      body: JSON.stringify(checkIn),
     }),
 }

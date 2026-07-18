@@ -29,9 +29,11 @@ from models import (
     PatientDB,
     PatternsResponse,
     TimelineEntry,
+    VoiceCheckIn,
+    VoiceCheckInResult,
     WearableLog,
 )
-from services import ai_coach, audit_log, clinician_summary, pattern_engine, safety_rules
+from services import ai_coach, audit_log, clinician_summary, pattern_engine, safety_rules, voice_checkin
 from services.timeline_builder import build_timeline
 
 DATA_PATH = Path(__file__).parent / "data" / "mock_patients.json"
@@ -100,6 +102,18 @@ def add_wearable_log(patient_id: str, log: WearableLog) -> WearableLog:
     patient = _get_patient(patient_id)
     patient.wearable_logs = [w for w in patient.wearable_logs if w.date != log.date] + [log]
     return log
+
+
+@app.post("/patients/{patient_id}/voice-check-in", response_model=VoiceCheckInResult)
+def voice_check_in(patient_id: str, check_in: VoiceCheckIn) -> VoiceCheckInResult:
+    """Extracts a draft DailyLog from a spoken/typed transcript for the
+    patient to review. Never saves anything -- the patient still confirms
+    via the existing POST /patients/{id}/logs, so the normal pattern_engine
+    and safety_rules pipeline is the only thing that ever acts on it."""
+    _get_patient(patient_id)
+    result = voice_checkin.extract(check_in.transcript, check_in.date)
+    audit_log.record_voice_checkin(patient_id, pattern_engine.RULE_VERSION, result.neutral_summary)
+    return result
 
 
 @app.get("/patients/{patient_id}/timeline", response_model=list[TimelineEntry])

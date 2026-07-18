@@ -78,5 +78,20 @@ def record_answer(patient_id: str, rule_version: str, answer_text: str) -> None:
     )
 
 
+def record_voice_checkin(patient_id: str, rule_version: str, neutral_summary: str) -> None:
+    _AUDIT_LOG.append(
+        AuditEntry(
+            timestamp=datetime.now(timezone.utc),
+            patient_id=patient_id,
+            entry_type="voice_check_in",
+            pattern_type=None,
+            rule_version=rule_version,
+            evidence_count=0,
+            sample_count=None,
+            displayed_text=neutral_summary,
+        )
+    )
+
+
 def get_audit_log() -> list[AuditEntry]:
     return list(_AUDIT_LOG)
