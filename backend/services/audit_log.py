@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from models import AuditEntry, EscalationLevel, FollowUpQuestion, PatternSignal
+from models import AuditEntry, DataAccessLevel, EscalationLevel, FollowUpQuestion, PatternSignal
 
 _AUDIT_LOG: list[AuditEntry] = []
 
@@ -89,6 +89,35 @@ def record_voice_checkin(patient_id: str, rule_version: str, neutral_summary: st
             evidence_count=0,
             sample_count=None,
             displayed_text=neutral_summary,
+        )
+    )
+
+
+def record_summary_share(
+    patient_id: str,
+    data_access: DataAccessLevel,
+    patient_confirmed: bool,
+) -> None:
+    """Record every report made available to a care team.
+
+    The demo does not send data to an external clinician system. This audit
+    event is the handoff boundary and makes the selected consent mode visible.
+    """
+
+    mode_label = {
+        DataAccessLevel.ASK_EACH_TIME: "Patient confirmed this report share.",
+        DataAccessLevel.AUTOMATED_REPORT: "Automated report sharing is enabled.",
+    }[data_access]
+    _AUDIT_LOG.append(
+        AuditEntry(
+            timestamp=datetime.now(timezone.utc),
+            patient_id=patient_id,
+            entry_type="clinician_summary_shared",
+            pattern_type=None,
+            rule_version="privacy-preference-v1",
+            evidence_count=0,
+            sample_count=None,
+            displayed_text=mode_label,
         )
     )
 

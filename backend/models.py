@@ -52,8 +52,22 @@ class EscalationLevel(str, Enum):
     CONTACT_CARE_TEAM = "contact_care_team"
 
 
+class DataAccessLevel(str, Enum):
+    """How a patient wants their personal health summary handled.
+
+    This controls the share action only. Pattern generation remains visible
+    to the patient in every mode; no care-team report is transmitted by the
+    demo API unless the selected mode permits it.
+    """
+
+    PRIVATE = "private"
+    ASK_EACH_TIME = "ask_each_time"
+    AUTOMATED_REPORT = "automated_report"
+
+
 class Preferences(BaseModel):
     goals: list[str] = Field(default_factory=list)
+    data_access: DataAccessLevel = DataAccessLevel.ASK_EACH_TIME
 
 
 class DailyLog(BaseModel):
@@ -161,6 +175,29 @@ class PatternsResponse(BaseModel):
 
 class JourneyStageUpdate(BaseModel):
     journey_stage: JourneyStage
+
+
+class DataAccessUpdate(BaseModel):
+    data_access: DataAccessLevel
+
+
+class SummaryShareRequest(BaseModel):
+    """Confirmation is required only for the ask-each-time mode.
+
+    A real deployment would bind this confirmation to an authenticated
+    patient and record consent in durable storage. The hackathon API keeps
+    it explicit and auditable in-memory.
+    """
+
+    patient_confirmed: bool = False
+
+
+class SummaryShareReceipt(BaseModel):
+    patient_id: str
+    data_access: DataAccessLevel
+    shared_at: datetime
+    patient_confirmed: bool
+    delivery: str
 
 
 class FollowUpQuestion(BaseModel):

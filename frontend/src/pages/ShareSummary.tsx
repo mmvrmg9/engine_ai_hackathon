@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api, type ClinicianSummary } from '../api'
+import { api, type ClinicianSummary, type DataAccessLevel } from '../api'
 import { usePatientContext } from '../context/PatientContext'
 import { EscalationBanner } from '../components/EscalationBanner'
 import { CONFIDENCE_LABELS, JOURNEY_STAGE_LABELS, PATTERN_TYPE_LABELS, formatDate } from '../lib/labels'
@@ -63,11 +63,37 @@ function buildPlainText(summary: ClinicianSummary): string {
   return lines.join('\n')
 }
 
+const ACCESS_OPTIONS: Array<{
+  value: DataAccessLevel
+  label: string
+  description: string
+}> = [
+  {
+    value: 'private',
+    label: 'Private',
+    description: 'Only you can view this information in Endo Loop.',
+  },
+  {
+    value: 'ask_each_time',
+    label: 'Ask me each time',
+    description: 'Endo Loop asks before each report is shared with your care team.',
+  },
+  {
+    value: 'automated_report',
+    label: 'Automated reports',
+    description: 'A report is made available to your care team when Endo Loop finds a meaningful pattern or safety flag.',
+  },
+]
+
 export function ShareSummary() {
-  const { selected } = usePatientContext()
+  const { selected, setDataAccess } = usePatientContext()
   const [summary, setSummary] = useState<ClinicianSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [savingAccess, setSavingAccess] = useState(false)
+  const [showSharePrompt, setShowSharePrompt] = useState(false)
+  const [sharing, setSharing] = useState(false)
+  const [shareMessage, setShareMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (!selected) return
@@ -93,6 +119,42 @@ export function ShareSummary() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const changeAccess = async (dataAccess: DataAccessLevel) => {
+    setSavingAccess(true)
+    setShareMessage(null)
+    try {
+      await setDataAccess(dataAccess)
+      setShowSharePrompt(false)
+    } finally {
+      setSavingAccess(false)
+    }
+  }
+
+  const sendReport = async (patientConfirmed = false) => {
+    if (!selected) return
+    setSharing(true)
+    try {
+      const receipt = await api.shareClinicianSummary(selected.id, patientConfirmed)
+      setShareMessage(receipt.delivery)
+      setShowSharePrompt(false)
+    } catch (error) {
+      setShareMessage(error instanceof Error ? 'The report could not be shared.' : 'The report could not be shared.')
+    } finally {
+      setSharing(false)
+    }
+  }
+
+  const handleShare = () => {
+    setShareMessage(null)
+    if (selected.preferences.data_access === 'ask_each_time') {
+      setShowSharePrompt(true)
+      return
+    }
+    if (selected.preferences.data_access === 'automated_report') {
+      void sendReport()
+    }
+  }
+
   return (
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
@@ -103,6 +165,76 @@ export function ShareSummary() {
 
       {!loading && summary && (
         <>
+          <section className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Report privacy</p>
+            <h2 className="mt-1 text-base font-bold text-slate-900">Choose how your data is shared</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              You can change this at any time. Pattern insights always remain visible to you.
+            </p>
+            <div className="mt-3 space-y-2">
+              {ACCESS_OPTIONS.map((option) => {
+                const isSelected = selected.preferences.data_access === option.value
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    disabled={savingAccess}
+                    onClick={() => void changeAccess(option.value)}
+                    className={`w-full rounded-xl border p-3 text-left transition-colors disabled:opacity-50 ${
+                      isSelected
+                        ? 'border-violet-500 bg-violet-50'
+                        : 'border-slate-200 bg-white hover:border-violet-200'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-slate-800">{option.label}</span>
+                      <span
+                        aria-hidden="true"
+                        className={`h-4 w-4 rounded-full border-4 ${
+                          isSelected ? 'border-violet-600 bg-white' : 'border-slate-200 bg-white'
+                        }`}
+                      />
+                    </span>
+                    <span className="mt-1 block text-xs leading-relaxed text-slate-500">{option.description}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+
+          {showSharePrompt && (
+            <section className="rounded-2xl border border-violet-200 bg-violet-50 p-4">
+              <p className="text-sm font-semibold text-violet-900">Share this report with your care team?</p>
+              <p className="mt-1 text-sm leading-relaxed text-violet-800">
+                This report includes your symptom history, observed patterns, and your follow-up answers.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => void sendReport(true)}
+                  disabled={sharing}
+                  className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                >
+                  {sharing ? 'Sharing...' : 'Yes, share report'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSharePrompt(false)}
+                  disabled={sharing}
+                  className="rounded-xl border border-violet-200 bg-white px-4 py-2 text-sm font-semibold text-violet-800"
+                >
+                  Not now
+                </button>
+              </div>
+            </section>
+          )}
+
+          {shareMessage && (
+            <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+              {shareMessage}
+            </p>
+          )}
+
           <div className="flex gap-2 no-print">
             <button
               type="button"
@@ -119,6 +251,25 @@ export function ShareSummary() {
               {copied ? 'Copied' : 'Copy as text'}
             </button>
           </div>
+
+          {selected.preferences.data_access === 'private' ? (
+            <p className="rounded-xl border border-slate-200 bg-slate-100 p-3 text-sm text-slate-600">
+              Your setting is Private. This report will not be shared with your care team.
+            </p>
+          ) : selected.preferences.data_access === 'ask_each_time' ? (
+            <button
+              type="button"
+              onClick={handleShare}
+              disabled={sharing}
+              className="w-full rounded-xl bg-violet-700 py-3 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {sharing ? 'Sharing report...' : 'Share with my care team'}
+            </button>
+          ) : (
+            <p className="rounded-xl border border-violet-200 bg-violet-50 p-3 text-sm text-violet-900">
+              Automated reports are enabled. Your care team will receive a report when Endo Loop finds a meaningful pattern or safety flag.
+            </p>
+          )}
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5">
             <p className="text-xs uppercase tracking-wide text-slate-400">Endo Loop summary</p>
