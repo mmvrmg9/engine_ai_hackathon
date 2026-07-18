@@ -40,6 +40,8 @@ export interface DailyLog {
   fever: boolean
   gi_symptoms: string[]
   fatigue: FatigueLevel | null
+  stress_level: string | null
+  feeling_note: string | null
   sleep_hours: number | null
   medication_taken: boolean
 }
@@ -73,6 +75,7 @@ export interface TimelineEntry {
   fever: boolean
   gi_symptoms: string[]
   fatigue: FatigueLevel | null
+  feeling_note: string | null
   sleep_hours: number | null
   medication_taken: boolean
   hrv_ms: number | null
@@ -157,6 +160,30 @@ export interface ClinicianSummary {
   insufficient_data: boolean
 }
 
+export type RiskReviewBand = 'monitoring' | 'review' | 'priority_review'
+
+export interface MoodAssessment {
+  score_10: number
+  label: string
+  source: 'llm' | 'fallback' | 'not_available'
+  note_summary: string
+}
+
+export interface ClinicianRiskReview {
+  patient_id: string
+  patient_name: string
+  calculated_at: string
+  final_score_100: number
+  band: RiskReviewBand
+  pain_score_10: number
+  pain_observations: number
+  mood: MoodAssessment
+  latest_feeling_note: string | null
+  formula: string
+  clinician_note: string
+  patient_visible: false
+}
+
 export interface SummaryShareReceipt {
   patient_id: string
   data_access: DataAccessLevel
@@ -206,6 +233,8 @@ export const api = {
     }),
   getClinicianSummary: (patientId: string) =>
     request<ClinicianSummary>(`/patients/${patientId}/clinician-summary`),
+  getClinicianRiskReview: (patientId: string) =>
+    request<ClinicianRiskReview>(`/clinician/patients/${patientId}/risk-review`),
   updateDataAccess: (patientId: string, dataAccess: DataAccessLevel) =>
     request<Patient>(`/patients/${patientId}/data-access`, {
       method: 'PATCH',

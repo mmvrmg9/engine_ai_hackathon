@@ -21,6 +21,7 @@ def build_timeline(patient: Patient) -> list[TimelineEntry]:
             fever=log.fever,
             gi_symptoms=log.gi_symptoms,
             fatigue=log.fatigue,
+            feeling_note=log.feeling_note,
             sleep_hours=log.sleep_hours,
             medication_taken=log.medication_taken,
         )

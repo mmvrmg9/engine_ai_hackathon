@@ -5,7 +5,8 @@
       "name": "Priya",
       "journey_stage": "diagnosed_managing",
       "preferences": {
-        "goals": ["fewer unpredictable flares", "clearer conversations with GP"]
+        "goals": ["fewer unpredictable flares", "clearer conversations with GP"],
+        "data_access": "automated_report"
       },
       "daily_logs": [
         {"date": "2026-07-01", "cycle_day": 6,  "pain_score": 2, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "low",    "sleep_hours": 7.5, "medication_taken": false},
@@ -19,9 +20,9 @@
         {"date": "2026-07-09", "cycle_day": 14, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": [], "fatigue": "medium", "sleep_hours": 6.9, "medication_taken": false},
         {"date": "2026-07-10", "cycle_day": 15, "pain_score": 3, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.7, "medication_taken": false},
         {"date": "2026-07-11", "cycle_day": 16, "pain_score": 4, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "medium", "sleep_hours": 6.2, "medication_taken": true},
-        {"date": "2026-07-12", "cycle_day": 17, "pain_score": 5, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "high", "sleep_hours": 5.5, "medication_taken": true},
-        {"date": "2026-07-13", "cycle_day": 18, "pain_score": 6, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 5.0, "medication_taken": true},
-        {"date": "2026-07-14", "cycle_day": 19, "pain_score": 7, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 4.5, "medication_taken": false}
+        {"date": "2026-07-12", "cycle_day": 17, "pain_score": 5, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating"], "fatigue": "high", "sleep_hours": 5.5, "medication_taken": true, "feeling_note": "I am tired and worried that the pain is getting harder to manage."},
+        {"date": "2026-07-13", "cycle_day": 18, "pain_score": 6, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 5.0, "medication_taken": true, "feeling_note": "I feel overwhelmed and frustrated because I cannot plan around the pain."},
+        {"date": "2026-07-14", "cycle_day": 19, "pain_score": 7, "pain_location": "lower_left_pelvic", "pain_type": "cramping", "bleeding": false, "gi_symptoms": ["bloating", "nausea"], "fatigue": "high", "sleep_hours": 4.5, "medication_taken": false, "feeling_note": "Today has been overwhelming and exhausting; I am struggling to cope with the flare."}
       ],
       "wearable_logs": [
         {"date": "2026-07-01", "hrv_ms": 43, "hrv_baseline_ms": 41, "resting_hr": 62, "skin_temp_delta_c": 0.0},

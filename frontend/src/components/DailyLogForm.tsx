@@ -55,6 +55,7 @@ export function DailyLogForm({
   const [sleepHours, setSleepHours] = useState(7)
   const [giSymptoms, setGiSymptoms] = useState<string[]>([])
   const [cycleDay, setCycleDay] = useState('')
+  const [feelingNote, setFeelingNote] = useState('')
   const [done, setDone] = useState(false)
 
   const toggleGi = (symptom: string) => {
@@ -78,6 +79,7 @@ export function DailyLogForm({
       sleep_hours: sleepHours,
       gi_symptoms: giSymptoms,
       cycle_day: showCycleDay && cycleDay ? Number(cycleDay) : null,
+      feeling_note: feelingNote.trim() || null,
     })
     setDone(true)
     setTimeout(() => setDone(false), 2500)
@@ -199,6 +201,22 @@ export function DailyLogForm({
           />
         </div>
       )}
+
+      <div>
+        <label htmlFor="feeling-note" className="mb-1.5 block text-sm font-semibold text-slate-700">
+          How are you feeling? <span className="font-normal text-slate-400">(optional)</span>
+        </label>
+        <textarea
+          id="feeling-note"
+          value={feelingNote}
+          onChange={(e) => setFeelingNote(e.target.value)}
+          maxLength={500}
+          rows={3}
+          placeholder="A few words about how today has felt..."
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+        />
+        <p className="mt-1 text-xs text-slate-400">Included in your care-team report only when you choose to share it.</p>
+      </div>
 
       <button
         type="submit"

@@ -99,3 +99,14 @@ def test_journey_stage_toggle_changes_patterns_output_for_identical_data(client)
     managing_resp = client.get("/patients/P001/patterns").json()
 
     assert exploring_resp["next_step"] != managing_resp["next_step"]
+
+
+def test_clinician_risk_review_is_clinician_only_and_explainable(client):
+    review = client.get("/clinician/patients/P001/risk-review")
+    assert review.status_code == 200
+    body = review.json()
+    assert body["patient_visible"] is False
+    assert body["final_score_100"] == 58
+    assert body["pain_score_10"] == 4.4
+    assert body["mood"]["score_10"] == 8
+    assert "60%" in body["formula"]

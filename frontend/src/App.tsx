@@ -6,6 +6,7 @@ import { Today } from './pages/Today'
 import { MyPatterns } from './pages/MyPatterns'
 import { ShareSummary } from './pages/ShareSummary'
 import { JourneyStagePage } from './pages/JourneyStage'
+import { ClinicianReview } from './pages/ClinicianReview'
 
 function AppShell() {
   const { loading, error, patients } = usePatientContext()
@@ -41,6 +42,7 @@ function AppShell() {
             <Route path="/patterns" element={<MyPatterns />} />
             <Route path="/share" element={<ShareSummary />} />
             <Route path="/journey" element={<JourneyStagePage />} />
+            <Route path="/clinician" element={<ClinicianReview />} />
           </Routes>
         )}
       </main>

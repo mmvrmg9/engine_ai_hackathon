@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from models import (
     AuditEntry,
     ClinicianSummary,
+    ClinicianRiskReview,
     DataAccessLevel,
     DataAccessUpdate,
     DailyLog,
@@ -39,7 +40,7 @@ from models import (
     VoiceCheckInResult,
     WearableLog,
 )
-from services import ai_coach, audit_log, clinician_summary, pattern_engine, safety_rules, voice_checkin
+from services import ai_coach, audit_log, clinician_summary, pattern_engine, risk_evaluator, safety_rules, voice_checkin
 from services.timeline_builder import build_timeline
 
 DATA_PATH = Path(__file__).parent / "data" / "mock_patients.json"
@@ -68,6 +69,9 @@ _PATIENTS: dict[str, Patient] = {}
 _LATEST_PATTERNS: dict[str, PatternsResponse] = {}
 _QUESTIONS: dict[str, FollowUpQuestion] = {}
 _ANSWERS: dict[str, FollowUpAnswer] = {}
+# Demo-only representation of an approved clinician handoff. Production needs
+# authenticated roles and durable consent records, not in-memory state.
+_CLINICIAN_SHARED: set[str] = set()
 
 
 def _load_patients() -> dict[str, Patient]:
@@ -82,6 +86,7 @@ def startup() -> None:
     _LATEST_PATTERNS.clear()
     _QUESTIONS.clear()
     _ANSWERS.clear()
+    _CLINICIAN_SHARED.clear()
 
 
 def _get_patient(patient_id: str) -> Patient:
@@ -150,6 +155,7 @@ def get_patterns(patient_id: str) -> PatternsResponse:
             DataAccessLevel.AUTOMATED_REPORT,
             patient_confirmed=False,
         )
+        _CLINICIAN_SHARED.add(patient_id)
 
     for signal in patterns:
         audit_log.record_pattern(patient_id, signal)
@@ -221,6 +227,22 @@ def get_clinician_summary(patient_id: str) -> ClinicianSummary:
     return clinician_summary.build_summary(patient, patterns, questions, answers, escalation, reason)
 
 
+@app.get("/clinician/patients/{patient_id}/risk-review", response_model=ClinicianRiskReview)
+def get_clinician_risk_review(patient_id: str) -> ClinicianRiskReview:
+    """Return the clinician-only internal review score after consent gating."""
+
+    patient = _get_patient(patient_id)
+    access = patient.preferences.data_access
+    if access == DataAccessLevel.PRIVATE:
+        raise HTTPException(status_code=403, detail="This patient's data is private.")
+    if access == DataAccessLevel.ASK_EACH_TIME and patient_id not in _CLINICIAN_SHARED:
+        raise HTTPException(
+            status_code=409,
+            detail="Patient confirmation is required before clinician risk review is available.",
+        )
+    return risk_evaluator.build_review(patient)
+
+
 @app.patch("/patients/{patient_id}/data-access", response_model=Patient)
 def update_data_access(patient_id: str, update: DataAccessUpdate) -> Patient:
     """Update the patient's report-sharing preference.
@@ -267,6 +289,7 @@ def share_clinician_summary(
 
     patient_confirmed = access == DataAccessLevel.ASK_EACH_TIME
     audit_log.record_summary_share(patient_id, access, patient_confirmed)
+    _CLINICIAN_SHARED.add(patient_id)
     return SummaryShareReceipt(
         patient_id=patient_id,
         data_access=access,

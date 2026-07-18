@@ -81,6 +81,8 @@ class DailyLog(BaseModel):
     fever: bool = False
     gi_symptoms: list[str] = Field(default_factory=list)
     fatigue: Optional[FatigueLevel] = None
+    stress_level: Optional[str] = None
+    feeling_note: Optional[str] = Field(default=None, max_length=500)
     sleep_hours: Optional[float] = Field(default=None, ge=0, le=24)
     medication_taken: bool = False
 
@@ -120,6 +122,7 @@ class TimelineEntry(BaseModel):
     fever: bool = False
     gi_symptoms: list[str] = Field(default_factory=list)
     fatigue: Optional[FatigueLevel] = None
+    feeling_note: Optional[str] = None
     sleep_hours: Optional[float] = None
     medication_taken: bool = False
     hrv_ms: Optional[float] = None
@@ -234,6 +237,40 @@ class ClinicianSummary(BaseModel):
     escalation: EscalationLevel
     escalation_reason: Optional[str] = None
     insufficient_data: bool = False
+
+
+class RiskReviewBand(str, Enum):
+    MONITORING = "monitoring"
+    REVIEW = "review"
+    PRIORITY_REVIEW = "priority_review"
+
+
+class MoodAssessment(BaseModel):
+    """A constrained assessment of distress language in a patient note.
+
+    It is not a mental-health diagnosis, a crisis assessment, or a patient-
+    facing score. It only helps a clinician decide what context to review.
+    """
+
+    score_10: int = Field(ge=0, le=10)
+    label: str
+    source: str  # "llm" | "fallback" | "not_available"
+    note_summary: str
+
+
+class ClinicianRiskReview(BaseModel):
+    patient_id: str
+    patient_name: str
+    calculated_at: datetime
+    final_score_100: int = Field(ge=0, le=100)
+    band: RiskReviewBand
+    pain_score_10: float = Field(ge=0, le=10)
+    pain_observations: int = Field(ge=0)
+    mood: MoodAssessment
+    latest_feeling_note: Optional[str] = None
+    formula: str
+    clinician_note: str
+    patient_visible: bool = False
 
 
 class AuditEntry(BaseModel):
