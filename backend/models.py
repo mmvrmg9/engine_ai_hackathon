@@ -17,6 +17,7 @@ class DailyLog(BaseModel):
     bleeding: bool = False
     gi_symptoms: list[str] = []
     fatigue: str = "low"
+    stress_level: str = "not_recorded"
     sleep_hours: float = Field(ge=0, le=24)
     medication_taken: bool = False
     fever: bool = False
