@@ -26,7 +26,10 @@ def test_extracts_pain_score_location_type_and_sleep():
     assert log.pain_location == "lower_left_pelvic"
     assert log.pain_type == "cramping"
     assert log.sleep_hours == 4
-    assert result.missing_details == ["whether you have noticed any tummy or bowel symptoms"]
+    assert result.missing_details == [
+        "whether you have noticed any tummy or bowel symptoms",
+        "whether today has felt more stressful than usual",
+    ]
 
 
 def test_missing_details_produce_at_most_two_follow_up_questions():
@@ -52,6 +55,27 @@ def test_explicit_no_gi_symptoms_phrase_is_recognized_as_known():
     result = extract("Pain 2 out of 10, no tummy symptoms today, slept 7 hours.", date(2026, 7, 18))
     assert "whether you have noticed any tummy or bowel symptoms" not in result.missing_details
     assert result.extracted_log.gi_symptoms == []
+
+
+def test_spoken_number_words_parse_the_same_as_digits():
+    result = extract("Pain is seven out of ten, I slept four hours, no stress today.", date(2026, 7, 18))
+    assert result.extracted_log.pain_score == 7
+    assert result.extracted_log.sleep_hours == 4
+
+
+def test_stress_mention_sets_stress_level_and_clears_the_prompt():
+    result = extract(
+        "Pain is 3 out of 10, slept 7 hours, no tummy symptoms, feeling really stressed today.",
+        date(2026, 7, 18),
+    )
+    assert result.extracted_log.stress_level == "high"
+    assert "whether today has felt more stressful than usual" not in result.missing_details
+
+
+def test_no_stress_mention_leaves_stress_level_unset_and_prompts_for_it():
+    result = extract("Pain is 3 out of 10, slept 7 hours, no tummy symptoms.", date(2026, 7, 18))
+    assert result.extracted_log.stress_level is None
+    assert "whether today has felt more stressful than usual" in result.missing_details
 
 
 @pytest.fixture(autouse=True)
